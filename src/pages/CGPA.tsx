@@ -8,6 +8,7 @@ import { Plus, Trash2 } from 'lucide-react';
 import { AddSemesterModal } from '../components/cgpa/AddSemesterModal';
 import { AddSubjectModal } from '../components/cgpa/AddSubjectModal';
 import { Card } from '../components/ui/card';
+import { SEO } from '../components/SEO';
 
 export function CGPA() {
     const { user } = useAuth();
@@ -78,6 +79,10 @@ export function CGPA() {
 
     return (
         <div className="space-y-8">
+            <SEO 
+                title="CGPA Manager | StudyTrack" 
+                description="Track your grades, calculate GPA per semester, and monitor your academic progress over time with StudyTrack's CGPA Manager."
+            />
             <div className="flex items-center justify-between">
                 <div>
                     <h1 className="text-3xl font-bold tracking-tight">CGPA Manager</h1>

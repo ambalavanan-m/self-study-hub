@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
+import { SEO } from '../components/SEO';
 import { AuthLayout } from '../components/layout/AuthLayout';
 import { Button } from '../components/ui/button';
 import { Input } from '../components/ui/input';
@@ -31,7 +32,12 @@ export function ResetPassword() {
     };
 
     return (
-        <AuthLayout
+        <>
+            <SEO 
+                title="Reset Password | StudyTrack" 
+                description="Recover your StudyTrack account password. Enter your email to receive a secure reset link."
+            />
+            <AuthLayout
             title="Reset Password"
             subtitle="Enter your email to receive a password reset link"
         >
@@ -71,5 +77,6 @@ export function ResetPassword() {
                 </div>
             )}
         </AuthLayout>
+        </>
     );
 }

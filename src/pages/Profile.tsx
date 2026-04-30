@@ -9,6 +9,7 @@ import { User, Lock, Download, Upload, FileJson, FileText } from 'lucide-react';
 import { exportCGPA, exportTimetable } from '../lib/export';
 import { importCGPA, importTimetable } from '../lib/import';
 import { ThemeToggle } from '../components/ThemeToggle';
+import { SEO } from '../components/SEO';
 
 export function Profile() {
     const { user } = useAuth();
@@ -34,7 +35,7 @@ export function Profile() {
         try {
             const currentUser = auth.currentUser;
             if (currentUser) {
-                await updateProfile(currentUser, { 
+                await updateProfile(currentUser, {
                     displayName: formData.name,
                     photoURL: formData.avatarUrl || null
                 });
@@ -85,6 +86,10 @@ export function Profile() {
 
     return (
         <div className="max-w-2xl mx-auto space-y-8 pb-20">
+            <SEO 
+                title="Profile | StudyTrack" 
+                description="Manage your account settings, preferences, and data with StudyTrack. Export your academic progress or import backups."
+            />
             <div className="flex items-center justify-between">
                 <div>
                     <h1 className="text-3xl font-bold tracking-tight">Profile & Settings</h1>

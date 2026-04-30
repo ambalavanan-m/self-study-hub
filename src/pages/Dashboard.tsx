@@ -6,6 +6,7 @@ import { TodaySchedule } from '../components/dashboard/TodaySchedule';
 import { LiveClock } from '../components/dashboard/LiveClock';
 import { Calendar, Video, PieChart, User } from 'lucide-react';
 import { Link } from 'react-router-dom';
+import { SEO } from '../components/SEO';
 
 export function Dashboard() {
     const { user } = useAuth();
@@ -102,6 +103,10 @@ export function Dashboard() {
 
     return (
         <div className="space-y-8 pb-20 pt-10 lg:pt-0">
+            <SEO 
+                title="Dashboard | StudyTrack" 
+                description="Manage your academic life with the StudyTrack dashboard. View your CGPA, schedule, and ongoing classes at a glance."
+            />
             {/* Header */}
             <div className="flex items-start justify-between">
                 <div className="flex flex-col gap-2">

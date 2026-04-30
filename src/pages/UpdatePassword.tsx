@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { SEO } from '../components/SEO';
 import { AuthLayout } from '../components/layout/AuthLayout';
 import { Button } from '../components/ui/button';
 import { Input } from '../components/ui/input';
@@ -57,7 +58,12 @@ export function UpdatePassword() {
     };
 
     return (
-        <AuthLayout 
+        <>
+            <SEO 
+                title="Update Password | StudyTrack" 
+                description="Securely update your StudyTrack account password to keep your academic data safe."
+            />
+            <AuthLayout 
             title="Update Password" 
             subtitle="Enter your new password below"
         >
@@ -86,5 +92,6 @@ export function UpdatePassword() {
                 </Button>
             </form>
         </AuthLayout>
+        </>
     );
 }

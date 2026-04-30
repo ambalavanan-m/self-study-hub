@@ -1,10 +1,15 @@
 import { Link } from 'react-router-dom';
 import { Button } from '../components/ui/button';
 import { BookOpen, Brain, Calendar, FileText, CheckSquare, Clock } from 'lucide-react';
+import { SEO } from '../components/SEO';
 
 export function Landing() {
     return (
         <div className="min-h-screen bg-gradient-to-br from-primary/5 via-background to-secondary/5">
+            <SEO 
+                title="StudyTrack - Your Academic Life, Organized" 
+                description="Track your CGPA, manage your schedule, organize files, and stay on top of tasks. Everything you need to excel in college, in one place."
+            />
             <nav className="border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
                 <div className="container flex h-16 items-center justify-between px-4">
                     <div className="flex items-center gap-2">

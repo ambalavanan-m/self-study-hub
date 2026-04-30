@@ -8,6 +8,7 @@ import { AddClassModal } from '../components/timetable/AddClassModal';
 import { SmartAddModal } from '../components/timetable/SmartAddModal';
 import { Card } from '../components/ui/card';
 import { cn } from '../lib/utils';
+import { SEO } from '../components/SEO';
 
 interface TimetableEntry {
     id: string;
@@ -85,6 +86,10 @@ export function Timetable() {
 
     return (
         <div className="space-y-8 pb-20">
+            <SEO 
+                title="Timetable | StudyTrack" 
+                description="Organize your weekly class schedule with StudyTrack's interactive timetable. Manage theory and lab sessions with ease."
+            />
             <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
                 <div>
                     <h1 className="text-3xl font-bold tracking-tight">Timetable</h1>
