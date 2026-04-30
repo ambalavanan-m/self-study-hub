@@ -13,7 +13,6 @@ import { ThemeToggle } from '../components/ThemeToggle';
 export function Profile() {
     const { user } = useAuth();
     const [loading, setLoading] = useState(false);
-    const [uploading, setUploading] = useState(false);
     const [message, setMessage] = useState<{ type: 'success' | 'error', text: string } | null>(null);
     const [formData, setFormData] = useState({
         name: user?.displayName || '',
