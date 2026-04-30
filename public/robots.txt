@@ -2,4 +2,4 @@ User-agent: *
 Allow: /
 
 # Sitemap
-Sitemap: https://studytrack.app/sitemap.xml
+Sitemap: https://selfstudyhub.vercel.app/sitemap.xml
