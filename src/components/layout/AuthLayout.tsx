@@ -1,6 +1,4 @@
 import React from 'react';
-import { BookOpen } from 'lucide-react';
-
 
 interface AuthLayoutProps {
     children: React.ReactNode;
@@ -13,7 +11,7 @@ export function AuthLayout({ children, title, subtitle }: AuthLayoutProps) {
         <div className="min-h-screen grid lg:grid-cols-2">
             <div className="hidden lg:flex flex-col justify-between bg-zinc-900 p-8 text-white">
                 <div className="flex items-center gap-2 text-lg font-bold">
-                    <BookOpen className="h-6 w-6" />
+                    <img src="/logo.png" alt="Logo" className="h-8 w-8 object-contain" />
                     <span>StudyTrack</span>
                 </div>
                 <div className="space-y-4">
