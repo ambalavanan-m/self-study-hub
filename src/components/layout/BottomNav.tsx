@@ -4,13 +4,10 @@ import {
     LayoutDashboard,
     GraduationCap,
     Calendar,
-    FolderOpen,
     User,
     LogOut,
     Menu,
-    X,
-    Sparkles,
-    ClipboardCheck
+    X
 } from 'lucide-react';
 import { cn } from '../../lib/utils';
 import { useAuth } from '../../context/AuthContext';
@@ -44,9 +41,7 @@ export function BottomNav() {
     ];
 
     const secondaryLinks = [
-        { to: '/files', icon: FolderOpen, label: 'Files' },
         { to: '/profile', icon: User, label: 'Profile' },
-        { to: '/ai', icon: Sparkles, label: 'AI' },
     ];
 
     return (
@@ -75,15 +70,7 @@ export function BottomNav() {
                         </NavLink>
                     ))}
 
-                    <a
-                        href="https://nikeshclasstable.netlify.app/"
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="flex flex-col items-center justify-center p-3 rounded-xl transition-all duration-200 text-muted-foreground hover:bg-white/5 hover:text-primary"
-                    >
-                        <ClipboardCheck className="h-6 w-6 mb-1" />
-                        <span className="text-xs font-medium">Attendance</span>
-                    </a>
+
 
                     <button
                         onClick={() => signOut()}

@@ -1,6 +1,6 @@
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { useAuth } from './context/AuthContext';
-import { isConfigured } from './lib/supabase';
+
 import {
   Login,
   Signup,
@@ -8,37 +8,32 @@ import {
   Dashboard,
   CGPA,
   Timetable,
-  Files,
   Profile,
-  AI,
   UpdatePassword,
 } from './pages';
-import { ConfigurationError } from './pages/ConfigurationError';
+
 import { DashboardLayout } from './components/layout/DashboardLayout';
 
 function ProtectedRoute({ children }: { children: React.ReactNode }) {
-  const { session, loading } = useAuth();
+  const { user, loading } = useAuth();
 
   if (loading) return <div>Loading...</div>;
-  if (!session) return <Navigate to="/login" replace />;
+  if (!user) return <Navigate to="/login" replace />;
 
   return <>{children}</>;
 }
 
 function PublicRoute({ children }: { children: React.ReactNode }) {
-  const { session, loading } = useAuth();
+  const { user, loading } = useAuth();
 
   if (loading) return <div>Loading...</div>;
-  if (session) return <Navigate to="/dashboard" replace />;
+  if (user) return <Navigate to="/dashboard" replace />;
 
   return <>{children}</>;
 }
 
 function App() {
-  // Check if Supabase is configured
-  if (!isConfigured) {
-    return <ConfigurationError />;
-  }
+
 
   return (
     <BrowserRouter>
@@ -59,9 +54,7 @@ function App() {
           <Route path="/dashboard" element={<Dashboard />} />
           <Route path="/cgpa" element={<CGPA />} />
           <Route path="/timetable" element={<Timetable />} />
-          <Route path="/files" element={<Files />} />
           <Route path="/profile" element={<Profile />} />
-          <Route path="/ai" element={<AI />} />
         </Route>
       </Routes>
     </BrowserRouter>

@@ -4,7 +4,8 @@ import { Button } from '../ui/button';
 import { Input } from '../ui/input';
 import { Plus, Trash2, AlertCircle, CheckCircle2 } from 'lucide-react';
 import { parseCourseEntries, type CourseInput, type ParsedEntry } from '../../lib/ffcs';
-import { supabase } from '../../lib/supabase';
+import { collection, writeBatch, doc } from 'firebase/firestore';
+import { db } from '../../lib/firebase';
 import { useAuth } from '../../context/AuthContext';
 
 interface SmartAddModalProps {
@@ -50,25 +51,12 @@ export function SmartAddModal({ isOpen, onClose, onSuccess }: SmartAddModalProps
         setLoading(true);
 
         try {
-            const entriesToInsert = preview.entries.map(entry => ({
-                user_id: user.id,
-                day: entry.day,
-                start_time: entry.start_time,
-                end_time: entry.end_time,
-                subject_name: entry.subject_name,
-                subject_code: entry.subject_code,
-                type: entry.type,
-                room_number: entry.room_number,
-                slot_code: entry.slot_code,
-                slot_label: entry.slot_label,
-                credit: entry.credit
-            }));
-
-            const { error } = await supabase
-                .from('smart_timetable_entries')
-                .insert(entriesToInsert);
-
-            if (error) throw error;
+            const batch = writeBatch(db);
+            preview.entries.forEach(entry => {
+                const docRef = doc(collection(db, 'smart_timetable_entries'));
+                batch.set(docRef, { ...entry, user_id: user.uid });
+            });
+            await batch.commit();
 
             onSuccess();
             onClose();

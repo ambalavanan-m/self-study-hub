@@ -6,7 +6,5 @@ export { ResetPassword } from './ResetPassword';
 export { Dashboard } from './Dashboard';
 export { CGPA } from './CGPA';
 export { Timetable } from './Timetable';
-export { Files } from './Files';
 export { Profile } from './Profile';
-export { AI } from './AI';
 export { UpdatePassword } from './UpdatePassword';

@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
 import { Modal } from '../ui/modal';
 import { Button } from '../ui/button';
-import { supabase } from '../../lib/supabase';
+import { collection, addDoc } from 'firebase/firestore';
+import { db } from '../../lib/firebase';
 import { useAuth } from '../../context/AuthContext';
 
 interface AddSemesterModalProps {
@@ -24,15 +25,11 @@ export function AddSemesterModal({ isOpen, onClose, onSuccess }: AddSemesterModa
         setLoading(true);
 
         try {
-            const { error } = await supabase.from('semesters').insert([
-                {
-                    user_id: user.id,
-                    year: formData.year,
-                    term: formData.term,
-                },
-            ]);
-
-            if (error) throw error;
+            await addDoc(collection(db, 'semesters'), {
+                user_id: user.uid,
+                year: formData.year,
+                term: formData.term,
+            });
             onSuccess();
             onClose();
         } catch (error) {

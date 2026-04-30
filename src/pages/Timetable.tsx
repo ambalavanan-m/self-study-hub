@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useAuth } from '../context/AuthContext';
-import { supabase } from '../lib/supabase';
+import { collection, query, where, getDocs, doc, deleteDoc } from 'firebase/firestore';
+import { db } from '../lib/firebase';
 import { Button } from '../components/ui/button';
 import { Plus, Trash2, Wand2, Clock, MapPin } from 'lucide-react';
 import { AddClassModal } from '../components/timetable/AddClassModal';
@@ -37,22 +38,19 @@ export function Timetable() {
     const fetchTimetable = async () => {
         if (!user) return;
         try {
-            const [basicResult, smartResult] = await Promise.all([
-                supabase
-                    .from('timetable_entries')
-                    .select('*')
-                    .eq('user_id', user.id),
-                supabase
-                    .from('smart_timetable_entries')
-                    .select('*')
-                    .eq('user_id', user.id)
+            const basicQuery = query(collection(db, 'timetable_entries'), where('user_id', '==', user.uid));
+            const smartQuery = query(collection(db, 'smart_timetable_entries'), where('user_id', '==', user.uid));
+
+            const [basicSnapshot, smartSnapshot] = await Promise.all([
+                getDocs(basicQuery),
+                getDocs(smartQuery)
             ]);
 
-            if (basicResult.error) throw basicResult.error;
-            if (smartResult.error) throw smartResult.error;
+            const basicData = basicSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() as any }));
+            const smartData = smartSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() as any }));
 
             // Merge and sort entries
-            const allEntries = [...(basicResult.data || []), ...(smartResult.data || [])];
+            const allEntries = [...basicData, ...smartData];
             allEntries.sort((a, b) => a.start_time.localeCompare(b.start_time));
 
             setEntries(allEntries);
@@ -72,8 +70,8 @@ export function Timetable() {
         try {
             // Try deleting from both tables (one will succeed, one will do nothing)
             await Promise.all([
-                supabase.from('timetable_entries').delete().eq('id', id),
-                supabase.from('smart_timetable_entries').delete().eq('id', id)
+                deleteDoc(doc(db, 'timetable_entries', id)),
+                deleteDoc(doc(db, 'smart_timetable_entries', id))
             ]);
             fetchTimetable();
         } catch (error) {

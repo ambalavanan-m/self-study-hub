@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { supabase } from '../../lib/supabase';
+import { signInWithEmailAndPassword } from 'firebase/auth';
+import { auth } from '../../lib/firebase';
 import { AuthBackground } from './AuthBackground';
 import { ArrowRight, Eye, EyeOff } from 'lucide-react';
 
@@ -20,12 +21,7 @@ export function MobileLogin() {
         setError(null);
 
         try {
-            const { error } = await supabase.auth.signInWithPassword({
-                email: formData.email,
-                password: formData.password,
-            });
-
-            if (error) throw error;
+            await signInWithEmailAndPassword(auth, formData.email, formData.password);
             navigate('/dashboard');
         } catch (err: any) {
             setError(err.message);

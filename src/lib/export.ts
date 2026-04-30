@@ -1,6 +1,7 @@
 import jsPDF from 'jspdf';
 import autoTable from 'jspdf-autotable';
-import { supabase } from './supabase';
+import { collection, query, where, getDocs } from 'firebase/firestore';
+import { db } from './firebase';
 
 // --- Helper Types ---
 interface ExportOptions {
@@ -11,14 +12,18 @@ interface ExportOptions {
 // --- Export Functions ---
 
 export async function exportCGPA({ format, userId }: ExportOptions) {
-    const { data: semesters, error } = await supabase
-        .from('semesters')
-        .select('*, subjects(*)')
-        .eq('user_id', userId)
-        .order('year', { ascending: false })
-        .order('term', { ascending: false });
+    const semestersQuery = query(collection(db, 'semesters'), where('user_id', '==', userId));
+    const semestersSnapshot = await getDocs(semestersQuery);
+    const semestersData = semestersSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() as any }));
 
-    if (error) throw error;
+    const subjectsQuery = query(collection(db, 'subjects'), where('user_id', '==', userId));
+    const subjectsSnapshot = await getDocs(subjectsQuery);
+    const subjectsData = subjectsSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() as any }));
+
+    const semesters = semestersData.map(sem => ({
+        ...sem,
+        subjects: subjectsData.filter(sub => sub.semester_id === sem.id)
+    }));
 
     if (format === 'json') {
         downloadJSON(semesters, 'cgpa_data.json');
@@ -69,13 +74,9 @@ export async function exportCGPA({ format, userId }: ExportOptions) {
 }
 
 export async function exportTimetable({ format, userId }: ExportOptions) {
-    const { data: entries, error } = await supabase
-        .from('smart_timetable_entries')
-        .select('*')
-        .eq('user_id', userId)
-        .order('day');
-
-    if (error) throw error;
+    const entriesQuery = query(collection(db, 'smart_timetable_entries'), where('user_id', '==', userId));
+    const entriesSnapshot = await getDocs(entriesQuery);
+    const entries = entriesSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() as any }));
 
     if (format === 'json') {
         downloadJSON(entries, 'timetable_data.json');
@@ -114,39 +115,6 @@ export async function exportTimetable({ format, userId }: ExportOptions) {
     }
 }
 
-export async function exportFiles({ format, userId }: ExportOptions) {
-    const { data: files, error } = await supabase
-        .from('files')
-        .select('*')
-        .eq('user_id', userId)
-        .order('uploaded_at', { ascending: false });
-
-    if (error) throw error;
-
-    if (format === 'json') {
-        downloadJSON(files, 'files_metadata.json');
-    } else {
-        const doc = new jsPDF();
-        doc.text('Files Report', 14, 15);
-
-        const tableData = files?.map((f: any) => [
-            f.file_name,
-            (f.size_bytes / 1024 / 1024).toFixed(2) + ' MB',
-            f.file_type,
-            new Date(f.uploaded_at).toLocaleDateString()
-        ]);
-
-        autoTable(doc, {
-            startY: 25,
-            head: [['Name', 'Size', 'Type', 'Uploaded Date']],
-            body: tableData || [],
-            theme: 'grid',
-            headStyles: { fillColor: [66, 66, 66] },
-        });
-
-        doc.save('files_report.pdf');
-    }
-}
 
 // --- Helper Functions ---
 

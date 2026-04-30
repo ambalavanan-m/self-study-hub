@@ -2,7 +2,8 @@ import React, { useState } from 'react';
 import { Modal } from '../ui/modal';
 import { Button } from '../ui/button';
 import { Input } from '../ui/input';
-import { supabase } from '../../lib/supabase';
+import { collection, addDoc } from 'firebase/firestore';
+import { db } from '../../lib/firebase';
 import { useAuth } from '../../context/AuthContext';
 import { GRADE_POINTS, type Grade } from '../../lib/cgpa';
 
@@ -29,18 +30,14 @@ export function AddSubjectModal({ isOpen, onClose, onSuccess, semesterId }: AddS
         setLoading(true);
 
         try {
-            const { error } = await supabase.from('subjects').insert([
-                {
-                    user_id: user.id,
-                    semester_id: semesterId,
-                    subject_name: formData.subject_name,
-                    subject_code: formData.subject_code,
-                    grade: formData.grade,
-                    credit: formData.credit,
-                },
-            ]);
-
-            if (error) throw error;
+            await addDoc(collection(db, 'subjects'), {
+                user_id: user.uid,
+                semester_id: semesterId,
+                subject_name: formData.subject_name,
+                subject_code: formData.subject_code,
+                grade: formData.grade,
+                credit: formData.credit,
+            });
             onSuccess();
             onClose();
         } catch (error) {

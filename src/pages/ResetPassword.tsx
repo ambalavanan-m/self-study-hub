@@ -3,7 +3,8 @@ import { Link } from 'react-router-dom';
 import { AuthLayout } from '../components/layout/AuthLayout';
 import { Button } from '../components/ui/button';
 import { Input } from '../components/ui/input';
-import { supabase } from '../lib/supabase';
+import { sendPasswordResetEmail } from 'firebase/auth';
+import { auth } from '../lib/firebase';
 
 export function ResetPassword() {
     const [loading, setLoading] = useState(false);
@@ -18,11 +19,9 @@ export function ResetPassword() {
         setSuccess(false);
 
         try {
-            const { error } = await supabase.auth.resetPasswordForEmail(email, {
-                redirectTo: `${window.location.origin}/update-password`,
+            await sendPasswordResetEmail(auth, email, {
+                url: `${window.location.origin}/update-password`,
             });
-
-            if (error) throw error;
             setSuccess(true);
         } catch (err: any) {
             setError(err.message);

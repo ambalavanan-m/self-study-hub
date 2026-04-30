@@ -3,7 +3,8 @@ import { useNavigate } from 'react-router-dom';
 import { AuthLayout } from '../components/layout/AuthLayout';
 import { Button } from '../components/ui/button';
 import { Input } from '../components/ui/input';
-import { supabase } from '../lib/supabase';
+import { updatePassword, onAuthStateChanged } from 'firebase/auth';
+import { auth } from '../lib/firebase';
 
 export function UpdatePassword() {
     const [loading, setLoading] = useState(false);
@@ -13,14 +14,12 @@ export function UpdatePassword() {
     const navigate = useNavigate();
 
     useEffect(() => {
-        // Check if we have a session (recovery link logs user in)
-        const checkSession = async () => {
-            const { data: { session } } = await supabase.auth.getSession();
-            if (!session) {
+        const unsubscribe = onAuthStateChanged(auth, (user) => {
+            if (!user) {
                 navigate('/login');
             }
-        };
-        checkSession();
+        });
+        return () => unsubscribe();
     }, [navigate]);
 
     const handleSubmit = async (e: React.FormEvent) => {
@@ -40,11 +39,9 @@ export function UpdatePassword() {
         setError(null);
 
         try {
-            const { error } = await supabase.auth.updateUser({
-                password: password
-            });
-
-            if (error) throw error;
+            const user = auth.currentUser;
+            if (!user) throw new Error('Not authenticated');
+            await updatePassword(user, password);
 
             // Password updated successfully
             // Redirect to login or dashboard. 

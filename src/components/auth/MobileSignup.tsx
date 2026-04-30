@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { supabase } from '../../lib/supabase';
+import { createUserWithEmailAndPassword, updateProfile } from 'firebase/auth';
+import { doc, setDoc } from 'firebase/firestore';
+import { auth, db } from '../../lib/firebase';
 import { AuthBackground } from './AuthBackground';
 import { Eye, EyeOff } from 'lucide-react';
 
@@ -28,31 +30,18 @@ export function MobileSignup() {
         }
 
         try {
-            const { data, error: signUpError } = await supabase.auth.signUp({
-                email: formData.email,
-                password: formData.password,
-                options: {
-                    data: {
-                        name: formData.name,
-                    },
-                },
-            });
+            const userCredential = await createUserWithEmailAndPassword(auth, formData.email, formData.password);
+            const user = userCredential.user;
 
-            if (signUpError) throw signUpError;
+            await updateProfile(user, { displayName: formData.name });
 
-            if (data.user) {
-                const { error: profileError } = await supabase
-                    .from('profiles')
-                    .insert([
-                        {
-                            user_id: data.user.id,
-                            name: formData.name,
-                        },
-                    ]);
-
-                if (profileError) {
-                    console.error('Error creating profile:', profileError);
-                }
+            try {
+                await setDoc(doc(db, 'profiles', user.uid), {
+                    user_id: user.uid,
+                    name: formData.name,
+                });
+            } catch (profileError) {
+                console.error('Error creating profile:', profileError);
             }
 
             navigate('/dashboard');

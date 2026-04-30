@@ -1,9 +1,10 @@
 import { useEffect, useState } from 'react';
 import { useAuth } from '../context/AuthContext';
-import { supabase } from '../lib/supabase';
+import { collection, query, where, getDocs } from 'firebase/firestore';
+import { db } from '../lib/firebase';
 import { TodaySchedule } from '../components/dashboard/TodaySchedule';
 import { LiveClock } from '../components/dashboard/LiveClock';
-import { Calendar, FileText, Video, PieChart, User } from 'lucide-react';
+import { Calendar, Video, PieChart, User } from 'lucide-react';
 import { Link } from 'react-router-dom';
 
 export function Dashboard() {
@@ -31,11 +32,9 @@ export function Dashboard() {
             if (!user) return;
 
             try {
-                // Fetch all subjects to calculate CGPA and total credits
-                const { data: allSubjects } = await supabase
-                    .from('subjects')
-                    .select('*')
-                    .eq('user_id', user.id);
+                const subjectsQuery = query(collection(db, 'subjects'), where('user_id', '==', user.uid));
+                const subjectsSnapshot = await getDocs(subjectsQuery);
+                const allSubjects = subjectsSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() as any }));
 
                 // Calculate total credits and CGPA
                 let totalCredits = 0;
@@ -62,20 +61,18 @@ export function Dashboard() {
                 // Fetch Schedule
                 const today = new Date().toLocaleDateString('en-US', { weekday: 'long' });
 
-                const [basicResult, smartResult] = await Promise.all([
-                    supabase
-                        .from('timetable_entries')
-                        .select('*')
-                        .eq('user_id', user.id)
-                        .eq('day', today),
-                    supabase
-                        .from('smart_timetable_entries')
-                        .select('*')
-                        .eq('user_id', user.id)
-                        .eq('day', today)
+                const basicQuery = query(collection(db, 'timetable_entries'), where('user_id', '==', user.uid), where('day', '==', today));
+                const smartQuery = query(collection(db, 'smart_timetable_entries'), where('user_id', '==', user.uid), where('day', '==', today));
+                
+                const [basicSnapshot, smartSnapshot] = await Promise.all([
+                    getDocs(basicQuery),
+                    getDocs(smartQuery)
                 ]);
 
-                const allEntries = [...(basicResult.data || []), ...(smartResult.data || [])];
+                const basicData = basicSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() as any }));
+                const smartData = smartSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() as any }));
+
+                const allEntries = [...basicData, ...smartData];
                 allEntries.sort((a, b) => a.start_time.localeCompare(b.start_time));
 
                 setSchedule(allEntries);
@@ -110,21 +107,21 @@ export function Dashboard() {
                 <div className="flex flex-col gap-2">
                     <Link to="/profile" className="mb-2">
                         <div className="h-12 w-12 rounded-full overflow-hidden border bg-muted flex items-center justify-center hover:opacity-80 transition-opacity">
-                            {user?.user_metadata?.avatar_url ? (
+                            {user?.photoURL ? (
                                 <img
-                                    src={user.user_metadata.avatar_url}
+                                    src={user.photoURL}
                                     alt="Profile"
                                     className="h-full w-full object-cover"
                                 />
                             ) : (
                                 <span className="font-semibold text-lg">
-                                    {user?.user_metadata?.name?.charAt(0) || 'S'}
+                                    {user?.displayName?.charAt(0) || 'S'}
                                 </span>
                             )}
                         </div>
                     </Link>
                     <h1 className="text-3xl font-bold tracking-tight text-foreground">
-                        Hi, {user?.user_metadata?.name?.split(' ')[0] || 'Student'}!
+                        Hi, {user?.displayName?.split(' ')[0] || 'Student'}!
                     </h1>
                 </div>
                 <LiveClock />
@@ -133,7 +130,7 @@ export function Dashboard() {
             {/* Top Row: Quick Actions + Ongoing Class */}
             <div className="grid grid-cols-1 lg:grid-cols-4 gap-4">
                 {/* Quick Actions Wrapper - Takes 2 cols on desktop (1 each) */}
-                <div className="grid grid-cols-2 gap-4 lg:col-span-2">
+                <div className="grid grid-cols-1 gap-4 lg:col-span-2">
                     <Link to="/timetable">
                         <div className="rounded-3xl bg-card p-6 shadow-sm border border-border/50 hover:shadow-md transition-all h-full flex flex-col justify-between group">
                             <div className="p-3 bg-secondary w-fit rounded-2xl text-primary mb-4 group-hover:scale-110 transition-transform">
@@ -142,17 +139,6 @@ export function Dashboard() {
                             <div>
                                 <h3 className="font-bold text-lg">Check Schedule</h3>
                                 <p className="text-sm text-muted-foreground mt-1">{schedule.length} classes today</p>
-                            </div>
-                        </div>
-                    </Link>
-                    <Link to="/files">
-                        <div className="rounded-3xl bg-card p-6 shadow-sm border border-border/50 hover:shadow-md transition-all h-full flex flex-col justify-between group">
-                            <div className="p-3 bg-secondary w-fit rounded-2xl text-primary mb-4 group-hover:scale-110 transition-transform">
-                                <FileText className="h-6 w-6" />
-                            </div>
-                            <div>
-                                <h3 className="font-bold text-lg">Upload File</h3>
-                                <p className="text-sm text-muted-foreground mt-1">View your files</p>
                             </div>
                         </div>
                     </Link>

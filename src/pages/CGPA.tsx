@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useAuth } from '../context/AuthContext';
-import { supabase } from '../lib/supabase';
+import { collection, query, where, getDocs, doc, deleteDoc } from 'firebase/firestore';
+import { db } from '../lib/firebase';
 import { calculateCGPA, calculateGPA, type Semester } from '../lib/cgpa';
 import { Button } from '../components/ui/button';
 import { Plus, Trash2 } from 'lucide-react';
@@ -19,14 +20,27 @@ export function CGPA() {
     const fetchSemesters = async () => {
         if (!user) return;
         try {
-            const { data, error } = await supabase
-                .from('semesters')
-                .select('*, subjects(*)')
-                .order('year', { ascending: false })
-                .order('term', { ascending: false });
+            const semestersQuery = query(collection(db, 'semesters'), where('user_id', '==', user.uid));
+            const semestersSnapshot = await getDocs(semestersQuery);
+            const semestersData = semestersSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() as any }));
 
-            if (error) throw error;
-            setSemesters(data || []);
+            const subjectsQuery = query(collection(db, 'subjects'), where('user_id', '==', user.uid));
+            const subjectsSnapshot = await getDocs(subjectsQuery);
+            const subjectsData = subjectsSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() as any }));
+
+            let combined = semestersData.map(sem => ({
+                ...sem,
+                subjects: subjectsData.filter(sub => sub.semester_id === sem.id)
+            }));
+
+            // Sort by year descending, then term
+            const termOrder = { 'Fall': 2, 'Spring': 1, 'Summer': 0 };
+            combined.sort((a, b) => {
+                if (a.year !== b.year) return b.year - a.year;
+                return (termOrder[b.term as keyof typeof termOrder] || 0) - (termOrder[a.term as keyof typeof termOrder] || 0);
+            });
+
+            setSemesters(combined || []);
         } catch (error) {
             console.error('Error fetching semesters:', error);
         } finally {
@@ -41,7 +55,7 @@ export function CGPA() {
     const handleDeleteSubject = async (id: string) => {
         if (!confirm('Are you sure you want to delete this subject?')) return;
         try {
-            await supabase.from('subjects').delete().eq('id', id);
+            await deleteDoc(doc(db, 'subjects', id));
             fetchSemesters();
         } catch (error) {
             console.error('Error deleting subject:', error);
@@ -51,7 +65,7 @@ export function CGPA() {
     const handleDeleteSemester = async (id: string) => {
         if (!confirm('Are you sure you want to delete this semester? All subjects will be deleted.')) return;
         try {
-            await supabase.from('semesters').delete().eq('id', id);
+            await deleteDoc(doc(db, 'semesters', id));
             fetchSemesters();
         } catch (error) {
             console.error('Error deleting semester:', error);

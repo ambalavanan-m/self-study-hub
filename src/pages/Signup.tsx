@@ -3,7 +3,9 @@ import { Link, useNavigate } from 'react-router-dom';
 import { AuthLayout } from '../components/layout/AuthLayout';
 import { Button } from '../components/ui/button';
 import { Input } from '../components/ui/input';
-import { supabase } from '../lib/supabase';
+import { createUserWithEmailAndPassword, updateProfile } from 'firebase/auth';
+import { doc, setDoc } from 'firebase/firestore';
+import { auth, db } from '../lib/firebase';
 import { MobileSignup } from '../components/auth/MobileSignup';
 
 export function Signup() {
@@ -29,33 +31,18 @@ export function Signup() {
         }
 
         try {
-            const { data, error: signUpError } = await supabase.auth.signUp({
-                email: formData.email,
-                password: formData.password,
-                options: {
-                    data: {
-                        name: formData.name,
-                    },
-                },
-            });
+            const userCredential = await createUserWithEmailAndPassword(auth, formData.email, formData.password);
+            const user = userCredential.user;
 
-            if (signUpError) throw signUpError;
+            await updateProfile(user, { displayName: formData.name });
 
-            if (data.user) {
-                // Create profile
-                const { error: profileError } = await supabase
-                    .from('profiles')
-                    .insert([
-                        {
-                            user_id: data.user.id,
-                            name: formData.name,
-                        },
-                    ]);
-
-                if (profileError) {
-                    // If profile creation fails, we should probably warn the user but let them proceed
-                    console.error('Error creating profile:', profileError);
-                }
+            try {
+                await setDoc(doc(db, 'profiles', user.uid), {
+                    user_id: user.uid,
+                    name: formData.name,
+                });
+            } catch (profileError) {
+                console.error('Error creating profile:', profileError);
             }
 
             navigate('/dashboard');

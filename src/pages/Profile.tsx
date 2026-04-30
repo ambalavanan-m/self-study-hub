@@ -1,12 +1,13 @@
 import React, { useState, useRef } from 'react';
 import { useAuth } from '../context/AuthContext';
-import { supabase } from '../lib/supabase';
+import { updateProfile, updatePassword } from 'firebase/auth';
+import { auth } from '../lib/firebase';
 import { Button } from '../components/ui/button';
 import { Input } from '../components/ui/input';
 import { Card } from '../components/ui/card';
 import { User, Lock, Download, Upload, FileJson, FileText } from 'lucide-react';
-import { exportCGPA, exportTimetable, exportFiles } from '../lib/export';
-import { importCGPA, importTimetable, importFiles } from '../lib/import';
+import { exportCGPA, exportTimetable } from '../lib/export';
+import { importCGPA, importTimetable } from '../lib/import';
 import { ThemeToggle } from '../components/ThemeToggle';
 
 export function Profile() {
@@ -15,64 +16,16 @@ export function Profile() {
     const [uploading, setUploading] = useState(false);
     const [message, setMessage] = useState<{ type: 'success' | 'error', text: string } | null>(null);
     const [formData, setFormData] = useState({
-        name: user?.user_metadata?.name || '',
+        name: user?.displayName || '',
         email: user?.email || '',
         password: '',
         confirmPassword: '',
+        avatarUrl: user?.photoURL || '',
     });
-    const [avatarUrl, setAvatarUrl] = useState<string | null>(user?.user_metadata?.avatar_url || null);
 
     // Refs for file inputs
-    const avatarInputRef = useRef<HTMLInputElement>(null);
     const cgpaInputRef = useRef<HTMLInputElement>(null);
     const timetableInputRef = useRef<HTMLInputElement>(null);
-    const filesInputRef = useRef<HTMLInputElement>(null);
-
-    const handleAvatarUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
-        try {
-            setUploading(true);
-            setMessage(null);
-
-            if (!event.target.files || event.target.files.length === 0) {
-                throw new Error('You must select an image to upload.');
-            }
-
-            const file = event.target.files[0];
-            const fileExt = file.name.split('.').pop();
-            const fileName = `${user?.id}-${Math.random()}.${fileExt}`;
-            const filePath = `${fileName}`;
-
-            // Upload to Supabase Storage
-            const { error: uploadError } = await supabase.storage
-                .from('avatars')
-                .upload(filePath, file);
-
-            if (uploadError) {
-                throw uploadError;
-            }
-
-            // Get Public URL
-            const { data: { publicUrl } } = supabase.storage
-                .from('avatars')
-                .getPublicUrl(filePath);
-
-            // Update User Metadata
-            const { error: updateError } = await supabase.auth.updateUser({
-                data: { avatar_url: publicUrl }
-            });
-
-            if (updateError) {
-                throw updateError;
-            }
-
-            setAvatarUrl(publicUrl);
-            setMessage({ type: 'success', text: 'Profile picture updated!' });
-        } catch (error: any) {
-            setMessage({ type: 'error', text: error.message });
-        } finally {
-            setUploading(false);
-        }
-    };
 
     const handleUpdateProfile = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -80,20 +33,19 @@ export function Profile() {
         setMessage(null);
 
         try {
-            const updates: any = {
-                data: { name: formData.name },
-            };
-
-            if (formData.password) {
-                if (formData.password !== formData.confirmPassword) {
-                    throw new Error('Passwords do not match');
+            const currentUser = auth.currentUser;
+            if (currentUser) {
+                await updateProfile(currentUser, { 
+                    displayName: formData.name,
+                    photoURL: formData.avatarUrl || null
+                });
+                if (formData.password) {
+                    if (formData.password !== formData.confirmPassword) {
+                        throw new Error('Passwords do not match');
+                    }
+                    await updatePassword(currentUser, formData.password);
                 }
-                updates.password = formData.password;
             }
-
-            const { error } = await supabase.auth.updateUser(updates);
-
-            if (error) throw error;
             setMessage({ type: 'success', text: 'Profile updated successfully' });
             setFormData(prev => ({ ...prev, password: '', confirmPassword: '' }));
         } catch (error: any) {
@@ -103,12 +55,11 @@ export function Profile() {
         }
     };
 
-    const handleExport = async (type: 'cgpa' | 'timetable' | 'files', format: 'json' | 'pdf') => {
+    const handleExport = async (type: 'cgpa' | 'timetable', format: 'json' | 'pdf') => {
         if (!user) return;
         try {
-            if (type === 'cgpa') await exportCGPA({ format, userId: user.id });
-            if (type === 'timetable') await exportTimetable({ format, userId: user.id });
-            if (type === 'files') await exportFiles({ format, userId: user.id });
+            if (type === 'cgpa') await exportCGPA({ format, userId: user.uid });
+            if (type === 'timetable') await exportTimetable({ format, userId: user.uid });
             setMessage({ type: 'success', text: `${type.toUpperCase()} exported successfully` });
         } catch (error: any) {
             console.error(error);
@@ -116,14 +67,13 @@ export function Profile() {
         }
     };
 
-    const handleImport = async (type: 'cgpa' | 'timetable' | 'files', e: React.ChangeEvent<HTMLInputElement>) => {
+    const handleImport = async (type: 'cgpa' | 'timetable', e: React.ChangeEvent<HTMLInputElement>) => {
         if (!user || !e.target.files?.[0]) return;
         const file = e.target.files[0];
 
         try {
-            if (type === 'cgpa') await importCGPA({ file, userId: user.id });
-            if (type === 'timetable') await importTimetable({ file, userId: user.id });
-            if (type === 'files') await importFiles({ file, userId: user.id });
+            if (type === 'cgpa') await importCGPA({ file, userId: user.uid });
+            if (type === 'timetable') await importTimetable({ file, userId: user.uid });
             setMessage({ type: 'success', text: `${type.toUpperCase()} imported successfully` });
         } catch (error: any) {
             console.error(error);
@@ -150,29 +100,21 @@ export function Profile() {
                 <form onSubmit={handleUpdateProfile} className="space-y-6">
                     <div className="space-y-4">
                         <div className="flex flex-col items-center justify-center space-y-4 pb-6 border-b">
-                            <div className="relative group cursor-pointer" onClick={() => avatarInputRef.current?.click()}>
-                                <div className="h-24 w-24 rounded-full overflow-hidden border-4 border-background shadow-lg bg-muted flex items-center justify-center">
-                                    {avatarUrl ? (
-                                        <img src={avatarUrl} alt="Profile" className="h-full w-full object-cover" />
-                                    ) : (
-                                        <User className="h-12 w-12 text-muted-foreground" />
-                                    )}
-                                </div>
-                                <div className="absolute inset-0 bg-black/40 rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
-                                    <Upload className="h-6 w-6 text-white" />
-                                </div>
+                            <div className="h-24 w-24 rounded-full overflow-hidden border-4 border-background shadow-lg bg-muted flex items-center justify-center">
+                                {formData.avatarUrl ? (
+                                    <img src={formData.avatarUrl} alt="Profile" className="h-full w-full object-cover" />
+                                ) : (
+                                    <User className="h-12 w-12 text-muted-foreground" />
+                                )}
                             </div>
-                            <input
-                                type="file"
-                                ref={avatarInputRef}
-                                className="hidden"
-                                accept="image/*"
-                                onChange={handleAvatarUpload}
-                                disabled={uploading}
-                            />
-                            <p className="text-sm text-muted-foreground">
-                                {uploading ? 'Uploading...' : 'Click to upload profile picture'}
-                            </p>
+                            <div className="w-full">
+                                <Input
+                                    label="Profile Image Link"
+                                    value={formData.avatarUrl}
+                                    onChange={(e) => setFormData({ ...formData, avatarUrl: e.target.value })}
+                                    placeholder="Enter image URL (e.g., from Google Drive)"
+                                />
+                            </div>
                         </div>
 
                         <h2 className="text-xl font-semibold flex items-center gap-2">
@@ -291,28 +233,6 @@ export function Profile() {
                         </div>
                     </div>
 
-                    {/* Files Metadata */}
-                    <div className="space-y-3 p-4 border rounded-lg">
-                        <h3 className="font-medium">Files Metadata</h3>
-                        <div className="flex flex-wrap gap-2">
-                            <Button variant="outline" size="sm" onClick={() => handleExport('files', 'json')}>
-                                <FileJson className="mr-2 h-4 w-4" /> Export JSON
-                            </Button>
-                            <Button variant="outline" size="sm" onClick={() => handleExport('files', 'pdf')}>
-                                <FileText className="mr-2 h-4 w-4" /> Export PDF
-                            </Button>
-                            <Button variant="secondary" size="sm" onClick={() => filesInputRef.current?.click()}>
-                                <Upload className="mr-2 h-4 w-4" /> Import JSON
-                            </Button>
-                            <input
-                                type="file"
-                                ref={filesInputRef}
-                                className="hidden"
-                                accept=".json"
-                                onChange={(e) => handleImport('files', e)}
-                            />
-                        </div>
-                    </div>
                 </div>
             </Card>
         </div>

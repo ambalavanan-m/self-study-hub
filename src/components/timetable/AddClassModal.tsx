@@ -2,7 +2,8 @@ import React, { useState } from 'react';
 import { Modal } from '../ui/modal';
 import { Button } from '../ui/button';
 import { Input } from '../ui/input';
-import { supabase } from '../../lib/supabase';
+import { collection, addDoc } from 'firebase/firestore';
+import { db } from '../../lib/firebase';
 import { useAuth } from '../../context/AuthContext';
 import {
     DAYS,
@@ -42,22 +43,18 @@ export function AddClassModal({ isOpen, onClose, onSuccess }: AddClassModalProps
         const endTime = calculateEndTime(formData.start_time, formData.type);
 
         try {
-            const { error } = await supabase.from('timetable_entries').insert([
-                {
-                    user_id: user.id,
-                    day: formData.day,
-                    type: formData.type,
-                    slot_code: formData.type === 'theory' ? formData.slot_code : null,
-                    slot_label: formData.type === 'lab' ? formData.slot_label : null,
-                    subject_name: formData.subject_name,
-                    subject_code: formData.subject_code,
-                    start_time: formData.start_time,
-                    end_time: endTime,
-                    credit: formData.credit,
-                },
-            ]);
-
-            if (error) throw error;
+            await addDoc(collection(db, 'timetable_entries'), {
+                user_id: user.uid,
+                day: formData.day,
+                type: formData.type,
+                slot_code: formData.type === 'theory' ? formData.slot_code : null,
+                slot_label: formData.type === 'lab' ? formData.slot_label : null,
+                subject_name: formData.subject_name,
+                subject_code: formData.subject_code,
+                start_time: formData.start_time,
+                end_time: endTime,
+                credit: formData.credit,
+            });
             onSuccess();
             onClose();
         } catch (error) {
