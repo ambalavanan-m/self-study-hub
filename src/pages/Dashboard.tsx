@@ -137,8 +137,8 @@ export function Dashboard() {
                 {/* Quick Actions Wrapper - Takes 2 cols on desktop (1 each) */}
                 <div className="grid grid-cols-1 gap-4 lg:col-span-2">
                     <Link to="/timetable">
-                        <div className="rounded-3xl bg-card p-6 shadow-sm border border-border/50 hover:shadow-md transition-all h-full flex flex-col justify-between group">
-                            <div className="p-3 bg-secondary w-fit rounded-2xl text-primary mb-4 group-hover:scale-110 transition-transform">
+                        <div className="rounded-3xl glass p-6 shadow-sm border border-border/50 hover:shadow-md transition-all h-full flex flex-col justify-between group">
+                            <div className="p-3 bg-secondary/50 backdrop-blur-sm w-fit rounded-2xl text-primary mb-4 group-hover:scale-110 transition-transform">
                                 <Calendar className="h-6 w-6" />
                             </div>
                             <div>
@@ -166,10 +166,10 @@ export function Dashboard() {
                             <div className="absolute -right-10 bottom-0 h-32 w-32 rounded-full bg-white/10 blur-2xl" />
                         </div>
                     ) : (
-                        <div className="rounded-3xl bg-gradient-to-br from-gray-100 to-gray-200 dark:from-gray-800 dark:to-gray-900 p-6 text-foreground shadow-sm relative overflow-hidden h-full flex flex-col justify-center">
+                        <div className="rounded-3xl glass p-6 text-foreground shadow-sm relative overflow-hidden h-full flex flex-col justify-center border border-border/50">
                             <div className="relative z-10">
                                 <div className="mb-6">
-                                    <Calendar className="h-8 w-8 text-muted-foreground" />
+                                    <Calendar className="h-8 w-8 text-muted-foreground/70" />
                                 </div>
                                 <h3 className="text-xl font-bold mb-1">No Ongoing Class</h3>
                                 <p className="text-muted-foreground text-sm">Enjoy your free time!</p>
@@ -181,7 +181,7 @@ export function Dashboard() {
 
             {/* Stats */}
             <div className="grid grid-cols-2 gap-4">
-                <div className="rounded-3xl bg-card p-6 shadow-sm border border-border/50 flex flex-col justify-between">
+                <div className="rounded-3xl glass p-6 shadow-sm border border-border/50 flex flex-col justify-between">
                     <div className="flex justify-between items-start mb-4">
                         <h3 className="font-bold text-sm text-muted-foreground">Current CGPA</h3>
                         <div className="h-8 w-8 rounded-full bg-secondary flex items-center justify-center text-primary">
@@ -190,7 +190,7 @@ export function Dashboard() {
                     </div>
                     <div className="text-4xl font-black tracking-tighter">{stats.cgpa.toFixed(2)}</div>
                 </div>
-                <div className="rounded-3xl bg-card p-6 shadow-sm border border-border/50 flex flex-col justify-between">
+                <div className="rounded-3xl glass p-6 shadow-sm border border-border/50 flex flex-col justify-between">
                     <div className="flex justify-between items-start mb-4">
                         <h3 className="font-bold text-sm text-muted-foreground">Total Credits</h3>
                         <div className="h-8 w-8 rounded-full bg-secondary flex items-center justify-center text-primary">

@@ -5,14 +5,14 @@ import { auth } from '../lib/firebase';
 import { Button } from '../components/ui/button';
 import { Input } from '../components/ui/input';
 import { Card } from '../components/ui/card';
-import { User, Lock, Download, Upload, FileJson, FileText } from 'lucide-react';
+import { User, Lock, Download, Upload, FileJson, FileText, LogOut } from 'lucide-react';
 import { exportCGPA, exportTimetable } from '../lib/export';
 import { importCGPA, importTimetable } from '../lib/import';
 import { ThemeToggle } from '../components/ThemeToggle';
 import { SEO } from '../components/SEO';
 
 export function Profile() {
-    const { user } = useAuth();
+    const { user, signOut } = useAuth();
     const [loading, setLoading] = useState(false);
     const [message, setMessage] = useState<{ type: 'success' | 'error', text: string } | null>(null);
     const [formData, setFormData] = useState({
@@ -85,7 +85,7 @@ export function Profile() {
     };
 
     return (
-        <div className="max-w-2xl mx-auto space-y-8 pb-20">
+        <div className="max-w-5xl mx-auto space-y-8 pb-20">
             <SEO 
                 title="Profile | StudyTrack" 
                 description="Manage your account settings, preferences, and data with StudyTrack. Export your academic progress or import backups."
@@ -97,10 +97,17 @@ export function Profile() {
                         Manage your account settings and preferences.
                     </p>
                 </div>
-                <ThemeToggle />
+                <div className="flex items-center gap-4">
+                    <ThemeToggle />
+                    <Button variant="destructive" onClick={() => signOut()}>
+                        <LogOut className="h-4 w-4 mr-2" />
+                        Sign Out
+                    </Button>
+                </div>
             </div>
 
-            <Card className="p-6">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-start">
+                <Card className="p-6">
                 <form onSubmit={handleUpdateProfile} className="space-y-6">
                     <div className="space-y-4">
                         <div className="flex flex-col items-center justify-center space-y-4 pb-6 border-b">
@@ -192,7 +199,7 @@ export function Profile() {
                     </p>
 
                     {/* CGPA */}
-                    <div className="space-y-3 p-4 border rounded-lg">
+                    <div className="space-y-3 p-4 glass border border-white/20 rounded-2xl">
                         <h3 className="font-medium">CGPA & Grades</h3>
                         <div className="flex flex-wrap gap-2">
                             <Button variant="outline" size="sm" onClick={() => handleExport('cgpa', 'json')}>
@@ -215,7 +222,7 @@ export function Profile() {
                     </div>
 
                     {/* Timetable */}
-                    <div className="space-y-3 p-4 border rounded-lg">
+                    <div className="space-y-3 p-4 glass border border-white/20 rounded-2xl">
                         <h3 className="font-medium">Timetable</h3>
                         <div className="flex flex-wrap gap-2">
                             <Button variant="outline" size="sm" onClick={() => handleExport('timetable', 'json')}>
@@ -238,7 +245,8 @@ export function Profile() {
                     </div>
 
                 </div>
-            </Card>
+                </Card>
+            </div>
         </div>
     );
 }

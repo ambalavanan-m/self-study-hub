@@ -10,7 +10,7 @@ export function Landing() {
                 title="StudyTrack - Your Academic Life, Organized" 
                 description="Track your CGPA, manage your schedule, organize files, and stay on top of tasks. Everything you need to excel in college, in one place."
             />
-            <nav className="border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
+            <nav className="border-b border-white/10 glass sticky top-0 z-50">
                 <div className="container flex h-16 items-center justify-between px-4">
                     <div className="flex items-center gap-2">
                         <img src="/logo.png" alt="Logo" className="h-8 w-8 object-contain" />
@@ -114,8 +114,8 @@ function FeatureCard({ icon, title, description }: {
     description: string;
 }) {
     return (
-        <div className="rounded-lg border bg-card p-6 text-card-foreground shadow-sm transition-shadow hover:shadow-md">
-            <div className="mb-4 inline-flex rounded-lg bg-primary/10 p-3 text-primary">
+        <div className="rounded-lg glass border border-white/20 p-6 text-card-foreground shadow-sm transition-shadow hover:shadow-md">
+            <div className="mb-4 inline-flex rounded-lg bg-primary/20 backdrop-blur-sm p-3 text-primary">
                 {icon}
             </div>
             <h3 className="mb-2 text-xl font-semibold">{title}</h3>

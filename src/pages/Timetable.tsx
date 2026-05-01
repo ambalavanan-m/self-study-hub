@@ -129,7 +129,7 @@ export function Timetable() {
             {/* Timetable Entries */}
             <div className="space-y-4">
                 {filteredEntries.length === 0 ? (
-                    <div className="text-center py-12 border rounded-lg bg-muted/10">
+                    <div className="text-center py-12 glass rounded-3xl border border-white/20">
                         <p className="text-muted-foreground">No classes scheduled for {selectedDay}.</p>
                     </div>
                 ) : (

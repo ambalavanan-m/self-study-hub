@@ -4,41 +4,39 @@
 
 @layer base {
   :root {
-    /* New Palette Theme */
-    --background: 48 100% 93%;
-    /* Cream */
-    --foreground: 222.2 84% 4.9%;
-    /* Slate 950 */
+    /* Fresh Indigo/Violet Glassmorphism Theme */
+    --background: 240 20% 97%;
+    --foreground: 240 10% 10%;
 
-    --card: 48 100% 97%;
-    /* Light Cream */
-    --card-foreground: 222.2 84% 4.9%;
+    --card: 240 20% 99%;
+    --card-foreground: 240 10% 10%;
 
-    --popover: 48 100% 97%;
-    --popover-foreground: 222.2 84% 4.9%;
+    --popover: 240 20% 99%;
+    --popover-foreground: 240 10% 10%;
 
-    --primary: 220 100% 70%;
-    /* Blue */
+    --primary: 250 80% 65%;
+    /* Indigo */
     --primary-foreground: 0 0% 100%;
 
     --secondary: 210 100% 80%;
-    /* Light Blue */
-    --secondary-foreground: 222.2 47.4% 11.2%;
+    /* Blue */
+    --secondary-foreground: 240 10% 10%;
 
-    --muted: 210 100% 85%;
-    --muted-foreground: 215.4 16.3% 46.9%;
+    --muted: 240 20% 90%;
+    --muted-foreground: 240 10% 40%;
 
-    --accent: 210 100% 80%;
-    --accent-foreground: 222.2 47.4% 11.2%;
+    --accent: 180 80% 70%;
+    /* Teal/Cyan */
+    --accent-foreground: 240 10% 10%;
 
     --destructive: 0 84.2% 60.2%;
     --destructive-foreground: 210 40% 98%;
 
-    --border: 214.3 31.8% 91.4%;
-    --input: 214.3 31.8% 91.4%;
-    --ring: 220 100% 70%;
+    --border: 240 20% 90%;
+    --input: 240 20% 90%;
+    --ring: 250 80% 65%;
 
-    --radius: 0.75rem;
+    --radius: 1rem;
   }
 
   .dark {
@@ -83,7 +81,7 @@
   }
 
   body {
-    @apply bg-background text-foreground antialiased transition-colors duration-300;
+    @apply bg-background bg-mesh text-foreground antialiased transition-colors duration-300;
     font-feature-settings: "rlig" 1, "calt" 1;
   }
 
@@ -98,13 +96,33 @@
 }
 
 @layer utilities {
+  .bg-mesh {
+    background-color: hsl(var(--background));
+    background-image: 
+      radial-gradient(at 0% 0%, hsl(var(--primary) / 0.3) 0px, transparent 50%),
+      radial-gradient(at 100% 0%, hsl(var(--secondary) / 0.3) 0px, transparent 50%),
+      radial-gradient(at 100% 100%, hsl(var(--accent) / 0.3) 0px, transparent 50%),
+      radial-gradient(at 0% 100%, hsl(var(--primary) / 0.2) 0px, transparent 50%);
+    background-attachment: fixed;
+  }
+
+  .dark .bg-mesh {
+    background-color: hsl(var(--background));
+    background-image: 
+      radial-gradient(at 0% 0%, hsl(var(--primary) / 0.15) 0px, transparent 50%),
+      radial-gradient(at 100% 0%, hsl(var(--secondary) / 0.15) 0px, transparent 50%),
+      radial-gradient(at 100% 100%, hsl(var(--accent) / 0.15) 0px, transparent 50%),
+      radial-gradient(at 0% 100%, hsl(var(--primary) / 0.1) 0px, transparent 50%);
+    background-attachment: fixed;
+  }
+
   .glass {
-    @apply bg-white/10 backdrop-blur-xl border border-white/20;
+    @apply bg-white/40 backdrop-blur-xl border border-white/40;
     box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.07);
   }
 
   .dark .glass {
-    @apply bg-black/20 backdrop-blur-xl border border-white/10;
+    @apply bg-black/40 backdrop-blur-xl border border-white/10;
     box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
   }
 }
