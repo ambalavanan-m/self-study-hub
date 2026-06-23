@@ -1,6 +1,7 @@
-export type Grade = 'S' | 'A' | 'B' | 'C' | 'D' | 'E';
+export type Grade = 'S' | 'A' | 'B' | 'C' | 'D' | 'E' | 'P' | 'A_ABSENT'; 
+// Note: Renamed 'A' for Absent to 'A_ABSENT' to prevent a collision with the existing 'A' grade.
 
-export const GRADE_POINTS: Record<Grade, number> = {
+export const GRADE_POINTS: Record<Exclude<Grade, 'P' | 'A_ABSENT'>, number> = {
     S: 10,
     A: 9,
     B: 8,
@@ -31,6 +32,11 @@ export function calculateGPA(subjects: Subject[]): number {
     let totalCredits = 0;
 
     subjects.forEach((subject) => {
+        // Skip calculations entirely for Pass or Absent grades
+        if (subject.grade === 'P' || subject.grade === 'A_ABSENT') {
+            return; 
+        }
+
         const points = GRADE_POINTS[subject.grade];
         if (points !== undefined) {
             totalPoints += points * subject.credit;
@@ -50,6 +56,11 @@ export function calculateCGPA(semesters: Semester[]): number {
 
     semesters.forEach((semester) => {
         semester.subjects.forEach((subject) => {
+            // Skip calculations entirely for Pass or Absent grades
+            if (subject.grade === 'P' || subject.grade === 'A_ABSENT') {
+                return;
+            }
+
             const points = GRADE_POINTS[subject.grade];
             if (points !== undefined) {
                 totalPoints += points * subject.credit;
