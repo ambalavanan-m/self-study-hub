@@ -7,6 +7,7 @@ import { LiveClock } from '../components/dashboard/LiveClock';
 import { Calendar, Video, PieChart, User } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { SEO } from '../components/SEO';
+import { calculateGPA } from '../lib/cgpa';
 
 export function Dashboard() {
     const { user } = useAuth();
@@ -18,15 +19,6 @@ export function Dashboard() {
     const [schedule, setSchedule] = useState<any[]>([]);
     const [ongoingClass, setOngoingClass] = useState<any>(null);
 
-    // Grade point mapping
-    const gradePoints: Record<string, number> = {
-        'S': 10,
-        'A': 9,
-        'B': 8,
-        'C': 7,
-        'D': 6,
-        'E': 5,
-    };
 
     useEffect(() => {
         async function fetchDashboardData() {
@@ -39,20 +31,25 @@ export function Dashboard() {
 
                 // Calculate total credits and CGPA
                 let totalCredits = 0;
-                let totalGradePoints = 0;
 
                 if (allSubjects && allSubjects.length > 0) {
                     allSubjects.forEach((subject) => {
                         if (subject.grade && subject.credit) {
                             const credit = parseFloat(subject.credit);
-                            const gradePoint = gradePoints[subject.grade] || 0;
-                            totalCredits += credit;
-                            totalGradePoints += gradePoint * credit;
+                            // Only exclude absent subjects from earned credits
+                            if (subject.grade !== 'A_ABSENT') {
+                                totalCredits += credit;
+                            }
                         }
                     });
                 }
 
-                const cgpa = totalCredits > 0 ? totalGradePoints / totalCredits : 0;
+                // Make sure subject.credit is parsed to a number for calculateGPA
+                const formattedSubjects = allSubjects.map(sub => ({
+                    ...sub,
+                    credit: parseFloat(sub.credit)
+                }));
+                const cgpa = calculateGPA(formattedSubjects);
 
                 setStats({
                     cgpa: parseFloat(cgpa.toFixed(2)),

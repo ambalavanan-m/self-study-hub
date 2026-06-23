@@ -5,7 +5,7 @@ import { Input } from '../ui/input';
 import { collection, addDoc } from 'firebase/firestore';
 import { db } from '../../lib/firebase';
 import { useAuth } from '../../context/AuthContext';
-import { GRADE_POINTS, type Grade } from '../../lib/cgpa';
+import { type Grade } from '../../lib/cgpa';
 
 interface AddSubjectModalProps {
     isOpen: boolean;
@@ -72,9 +72,9 @@ export function AddSubjectModal({ isOpen, onClose, onSuccess, semesterId }: AddS
                             value={formData.grade}
                             onChange={(e) => setFormData({ ...formData, grade: e.target.value as Grade })}
                         >
-                            {Object.keys(GRADE_POINTS).map((grade) => (
+                            {(['S', 'A', 'B', 'C', 'D', 'E', 'P', 'A_ABSENT'] as Grade[]).map((grade) => (
                                 <option key={grade} value={grade}>
-                                    {grade}
+                                    {grade === 'A_ABSENT' ? 'Absent' : grade}
                                 </option>
                             ))}
                         </select>
