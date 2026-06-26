@@ -2,6 +2,7 @@ import jsPDF from 'jspdf';
 import autoTable from 'jspdf-autotable';
 import { collection, query, where, getDocs } from 'firebase/firestore';
 import { db } from './firebase';
+import { formatTimeTo12Hr } from './time';
 
 // --- Helper Types ---
 interface ExportOptions {
@@ -93,7 +94,7 @@ export async function exportTimetable({ format, userId }: ExportOptions) {
                 dayEntries.forEach((e: any) => {
                     tableData.push([
                         day,
-                        `${e.start_time.slice(0, 5)} - ${e.end_time.slice(0, 5)}`,
+                        `${formatTimeTo12Hr(e.start_time)} - ${formatTimeTo12Hr(e.end_time)}`,
                         e.subject_name,
                         e.subject_code,
                         e.type,

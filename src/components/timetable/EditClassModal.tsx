@@ -1,10 +1,9 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Modal } from '../ui/modal';
 import { Button } from '../ui/button';
 import { Input } from '../ui/input';
-import { collection, addDoc } from 'firebase/firestore';
+import { doc, updateDoc } from 'firebase/firestore';
 import { db } from '../../lib/firebase';
-import { useAuth } from '../../context/AuthContext';
 import {
     DAYS,
     THEORY_SLOTS,
@@ -13,14 +12,29 @@ import {
     type Day
 } from '../../lib/time';
 
-interface AddClassModalProps {
+interface TimetableEntry {
+    id: string;
+    day: string;
+    start_time: string;
+    end_time: string;
+    subject_name: string;
+    subject_code: string;
+    type: 'theory' | 'lab';
+    room_number: string;
+    slot_code?: string;
+    slot_label?: string;
+    credit?: number;
+    _collection?: 'timetable_entries' | 'smart_timetable_entries';
+}
+
+interface EditClassModalProps {
     isOpen: boolean;
     onClose: () => void;
     onSuccess: () => void;
+    entry: TimetableEntry | null;
 }
 
-export function AddClassModal({ isOpen, onClose, onSuccess }: AddClassModalProps) {
-    const { user } = useAuth();
+export function EditClassModal({ isOpen, onClose, onSuccess, entry }: EditClassModalProps) {
     const [loading, setLoading] = useState(false);
     const [formData, setFormData] = useState({
         day: 'Monday' as Day,
@@ -34,18 +48,33 @@ export function AddClassModal({ isOpen, onClose, onSuccess }: AddClassModalProps
         credit: 3,
     });
 
-    // Auto-calculate end time for display/validation could be added here
+    useEffect(() => {
+        if (entry) {
+            setFormData({
+                day: (entry.day || 'Monday') as Day,
+                type: entry.type || 'theory',
+                slot_code: entry.slot_code || 'A1',
+                slot_label: entry.slot_label || 'Morning',
+                subject_name: entry.subject_name || '',
+                subject_code: entry.subject_code || '',
+                room_number: entry.room_number || '',
+                start_time: entry.start_time || '08:00',
+                credit: entry.credit !== undefined ? entry.credit : 3,
+            });
+        }
+    }, [entry, isOpen]);
+
+    if (!entry) return null;
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
-        if (!user) return;
         setLoading(true);
 
         const endTime = calculateEndTime(formData.start_time, formData.type);
+        const collectionName = entry._collection || 'timetable_entries';
 
         try {
-            await addDoc(collection(db, 'timetable_entries'), {
-                user_id: user.uid,
+            await updateDoc(doc(db, collectionName, entry.id), {
                 day: formData.day,
                 type: formData.type,
                 slot_code: formData.type === 'theory' ? formData.slot_code : null,
@@ -60,14 +89,14 @@ export function AddClassModal({ isOpen, onClose, onSuccess }: AddClassModalProps
             onSuccess();
             onClose();
         } catch (error) {
-            console.error('Error adding class:', error);
+            console.error('Error updating class:', error);
         } finally {
             setLoading(false);
         }
     };
 
     return (
-        <Modal isOpen={isOpen} onClose={onClose} title="Add Class" className="md:max-w-3xl">
+        <Modal isOpen={isOpen} onClose={onClose} title="Edit Class" className="md:max-w-3xl">
             <form onSubmit={handleSubmit} className="space-y-4">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-3">
                     <Input
@@ -202,7 +231,7 @@ export function AddClassModal({ isOpen, onClose, onSuccess }: AddClassModalProps
                         Cancel
                     </Button>
                     <Button type="submit" isLoading={loading}>
-                        Add Class
+                        Save Changes
                     </Button>
                 </div>
             </form>

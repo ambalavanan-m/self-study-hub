@@ -68,9 +68,20 @@ export function getNextClass(classes: Array<{ start_time: string; end_time: stri
     return -1;
 }
 
+export function formatTimeTo12Hr(timeStr: string): string {
+    if (!timeStr || timeStr === '-' || timeStr === 'Lunch') return timeStr;
+    const [hoursStr, minutesStr] = timeStr.split(':');
+    const hours = parseInt(hoursStr, 10);
+    if (isNaN(hours)) return timeStr;
+    const ampm = hours >= 12 ? 'PM' : 'AM';
+    const hr = hours % 12 === 0 ? 12 : hours % 12;
+    const hrStr = hr < 10 ? `0${hr}` : hr;
+    return `${hrStr}:${minutesStr} ${ampm}`;
+}
+
 export function formatTimeRange(startTime: string, endTime: string): string {
     if (!startTime || !endTime) return '';
-    return `${startTime.slice(0, 5)} - ${endTime.slice(0, 5)}`;
+    return `${formatTimeTo12Hr(startTime)} - ${formatTimeTo12Hr(endTime)}`;
 }
 
 export function getMinutesUntil(targetTime: string): number {

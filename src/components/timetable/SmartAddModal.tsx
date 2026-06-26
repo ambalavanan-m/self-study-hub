@@ -7,6 +7,7 @@ import { parseCourseEntries, type CourseInput, type ParsedEntry } from '../../li
 import { collection, writeBatch, doc } from 'firebase/firestore';
 import { db } from '../../lib/firebase';
 import { useAuth } from '../../context/AuthContext';
+import { formatTimeTo12Hr } from '../../lib/time';
 
 interface SmartAddModalProps {
     isOpen: boolean;
@@ -188,7 +189,7 @@ export function SmartAddModal({ isOpen, onClose, onSuccess }: SmartAddModalProps
                                                     <td className="p-2">{entry.subject_name}</td>
                                                     <td className="p-2">{entry.slot_code}</td>
                                                     <td className="p-2">{entry.day}</td>
-                                                    <td className="p-2">{entry.start_time} - {entry.end_time}</td>
+                                                    <td className="p-2">{formatTimeTo12Hr(entry.start_time)} - {formatTimeTo12Hr(entry.end_time)}</td>
                                                     <td className="p-2">{entry.room_number}</td>
                                                 </tr>
                                             ))}

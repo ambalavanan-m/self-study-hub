@@ -3,12 +3,15 @@ import { useAuth } from '../context/AuthContext';
 import { collection, query, where, getDocs, doc, deleteDoc } from 'firebase/firestore';
 import { db } from '../lib/firebase';
 import { Button } from '../components/ui/button';
-import { Plus, Trash2, Wand2, Clock, MapPin } from 'lucide-react';
+import { Plus, Trash2, Wand2, Clock, MapPin, Edit2 } from 'lucide-react';
 import { AddClassModal } from '../components/timetable/AddClassModal';
 import { SmartAddModal } from '../components/timetable/SmartAddModal';
+import { EditClassModal } from '../components/timetable/EditClassModal';
 import { Card } from '../components/ui/card';
 import { cn } from '../lib/utils';
 import { SEO } from '../components/SEO';
+import { formatTimeTo12Hr } from '../lib/time';
+
 
 interface TimetableEntry {
     id: string;
@@ -21,14 +24,19 @@ interface TimetableEntry {
     room_number: string;
     slot_code?: string;
     slot_label?: string;
+    credit?: number;
+    _collection?: 'timetable_entries' | 'smart_timetable_entries';
 }
 
 export function Timetable() {
     const { user } = useAuth();
+
     const [loading, setLoading] = useState(true);
     const [entries, setEntries] = useState<TimetableEntry[]>([]);
     const [isAddClassOpen, setIsAddClassOpen] = useState(false);
     const [isSmartAddOpen, setIsSmartAddOpen] = useState(false);
+    const [isEditClassOpen, setIsEditClassOpen] = useState(false);
+    const [selectedEntryForEdit, setSelectedEntryForEdit] = useState<TimetableEntry | null>(null);
     const [selectedDay, setSelectedDay] = useState<string>(() => {
         const today = new Date().toLocaleDateString('en-US', { weekday: 'long' });
         return ['Saturday', 'Sunday'].includes(today) ? 'Monday' : today;
@@ -47,8 +55,8 @@ export function Timetable() {
                 getDocs(smartQuery)
             ]);
 
-            const basicData = basicSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() as any }));
-            const smartData = smartSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() as any }));
+            const basicData = basicSnapshot.docs.map(doc => ({ id: doc.id, _collection: 'timetable_entries' as const, ...doc.data() as any }));
+            const smartData = smartSnapshot.docs.map(doc => ({ id: doc.id, _collection: 'smart_timetable_entries' as const, ...doc.data() as any }));
 
             // Merge and sort entries
             const allEntries = [...basicData, ...smartData];
@@ -66,14 +74,18 @@ export function Timetable() {
         fetchTimetable();
     }, [user]);
 
-    const handleDeleteEntry = async (id: string) => {
-        if (!confirm('Are you sure you want to delete this class?')) return;
+    const handleDeleteEntry = async (entry: TimetableEntry) => {
+        if (!confirm(`Are you sure you want to delete "${entry.subject_name}"?`)) return;
         try {
-            // Try deleting from both tables (one will succeed, one will do nothing)
-            await Promise.all([
-                deleteDoc(doc(db, 'timetable_entries', id)),
-                deleteDoc(doc(db, 'smart_timetable_entries', id))
-            ]);
+            if (entry._collection) {
+                await deleteDoc(doc(db, entry._collection, entry.id));
+            } else {
+                // Try deleting from both tables (one will succeed, one will do nothing)
+                await Promise.all([
+                    deleteDoc(doc(db, 'timetable_entries', entry.id)),
+                    deleteDoc(doc(db, 'smart_timetable_entries', entry.id))
+                ]);
+            }
             fetchTimetable();
         } catch (error) {
             console.error('Error deleting entry:', error);
@@ -97,7 +109,7 @@ export function Timetable() {
                         Manage your weekly class schedule.
                     </p>
                 </div>
-                <div className="flex gap-2 w-full sm:w-auto">
+                <div className="flex flex-wrap items-center gap-3 w-full sm:w-auto">
                     <Button onClick={() => setIsSmartAddOpen(true)} variant="secondary" className="flex-1 sm:flex-none">
                         <Wand2 className="mr-2 h-4 w-4" />
                         Smart Add
@@ -137,7 +149,7 @@ export function Timetable() {
                         <Card key={entry.id} className="p-4 flex flex-col sm:flex-row items-start sm:items-center gap-4 hover:border-primary/50 transition-colors">
                             <div className="flex-shrink-0 w-full sm:w-32 text-center sm:text-left">
                                 <div className="font-bold text-lg">
-                                    {entry.start_time.slice(0, 5)} - {entry.end_time.slice(0, 5)}
+                                    {formatTimeTo12Hr(entry.start_time)} - {formatTimeTo12Hr(entry.end_time)}
                                 </div>
                                 <div className="text-xs text-muted-foreground uppercase tracking-wider font-semibold mt-1">
                                     {entry.type}
@@ -165,12 +177,23 @@ export function Timetable() {
                                 </div>
                             </div>
 
-                            <div className="w-full sm:w-auto flex justify-end">
+                            <div className="hidden sm:flex justify-end gap-2">
                                 <Button
                                     variant="ghost"
                                     size="sm"
-                                    className="text-destructive hover:text-destructive"
-                                    onClick={() => handleDeleteEntry(entry.id)}
+                                    className="text-primary hover:text-primary hover:bg-primary/10"
+                                    onClick={() => {
+                                        setSelectedEntryForEdit(entry);
+                                        setIsEditClassOpen(true);
+                                    }}
+                                >
+                                    <Edit2 className="h-4 w-4" />
+                                </Button>
+                                <Button
+                                    variant="ghost"
+                                    size="sm"
+                                    className="text-destructive hover:text-destructive hover:bg-destructive/10"
+                                    onClick={() => handleDeleteEntry(entry)}
                                 >
                                     <Trash2 className="h-4 w-4" />
                                 </Button>
@@ -190,6 +213,16 @@ export function Timetable() {
                 isOpen={isSmartAddOpen}
                 onClose={() => setIsSmartAddOpen(false)}
                 onSuccess={fetchTimetable}
+            />
+
+            <EditClassModal
+                isOpen={isEditClassOpen}
+                onClose={() => {
+                    setIsEditClassOpen(false);
+                    setSelectedEntryForEdit(null);
+                }}
+                onSuccess={fetchTimetable}
+                entry={selectedEntryForEdit}
             />
         </div>
     );

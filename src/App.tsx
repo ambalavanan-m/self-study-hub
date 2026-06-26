@@ -10,6 +10,7 @@ import {
   Timetable,
   Profile,
   UpdatePassword,
+  TimetableGrid,
 } from './pages';
 
 import { DashboardLayout } from './components/layout/DashboardLayout';
@@ -54,6 +55,7 @@ function App() {
           <Route path="/dashboard" element={<Dashboard />} />
           <Route path="/cgpa" element={<CGPA />} />
           <Route path="/timetable" element={<Timetable />} />
+          <Route path="/timetable-grid" element={<TimetableGrid />} />
           <Route path="/profile" element={<Profile />} />
         </Route>
       </Routes>

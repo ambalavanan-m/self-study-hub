@@ -8,3 +8,4 @@ export { CGPA } from './CGPA';
 export { Timetable } from './Timetable';
 export { Profile } from './Profile';
 export { UpdatePassword } from './UpdatePassword';
+export { TimetableGrid } from './TimetableGrid';

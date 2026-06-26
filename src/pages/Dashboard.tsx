@@ -8,6 +8,7 @@ import { Calendar, Video, PieChart, User } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { SEO } from '../components/SEO';
 import { calculateGPA } from '../lib/cgpa';
+import { formatTimeTo12Hr } from '../lib/time';
 
 export function Dashboard() {
     const { user } = useAuth();
@@ -156,7 +157,7 @@ export function Dashboard() {
                                 </div>
                                 <h3 className="text-xl font-bold mb-1">Ongoing Class</h3>
                                 <p className="text-white/90 font-medium mb-2">{ongoingClass.subject_name}</p>
-                                <p className="text-white/80 text-sm">Ends at {ongoingClass.end_time.slice(0, 5)}</p>
+                                <p className="text-white/80 text-sm">Ends at {formatTimeTo12Hr(ongoingClass.end_time)}</p>
                             </div>
                             {/* Decorative circles */}
                             <div className="absolute -right-4 -top-4 h-24 w-24 rounded-full bg-white/10 blur-2xl" />
