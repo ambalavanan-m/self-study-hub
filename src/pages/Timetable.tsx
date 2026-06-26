@@ -10,7 +10,15 @@ import { EditClassModal } from '../components/timetable/EditClassModal';
 import { Card } from '../components/ui/card';
 import { cn } from '../lib/utils';
 import { SEO } from '../components/SEO';
-import { formatTimeTo12Hr } from '../lib/time';
+import { formatTimeTo12Hr, DAYS } from '../lib/time';
+
+const dayLabels: Record<typeof DAYS[number], string> = {
+    'Monday': 'mon',
+    'Tuesday': 'tue',
+    'Wednesday': 'web',
+    'Thursday': 'thu',
+    'Friday': 'fri'
+};
 
 
 interface TimetableEntry {
@@ -41,8 +49,6 @@ export function Timetable() {
         const today = new Date().toLocaleDateString('en-US', { weekday: 'long' });
         return ['Saturday', 'Sunday'].includes(today) ? 'Monday' : today;
     });
-
-    const days = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri'];
 
     const fetchTimetable = async () => {
         if (!user) return;
@@ -123,7 +129,7 @@ export function Timetable() {
 
             {/* Day Selector */}
             <div className="flex overflow-x-auto pb-2 gap-2 scrollbar-hide">
-                {days.map((day) => (
+                {DAYS.map((day) => (
                     <Button
                         key={day}
                         variant={selectedDay === day ? 'primary' : 'outline'}
@@ -133,7 +139,8 @@ export function Timetable() {
                             selectedDay === day && "bg-primary text-primary-foreground"
                         )}
                     >
-                        {day}
+                        <span className="sm:hidden">{dayLabels[day]}</span>
+                        <span className="hidden sm:inline">{day}</span>
                     </Button>
                 ))}
             </div>
