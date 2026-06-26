@@ -1,31 +1,32 @@
-
-
 export function AuthBackground() {
     return (
-        <div className="absolute inset-0 -z-10 overflow-hidden bg-[#FF8BA7]">
-            <svg
-                className="absolute left-0 top-0 h-full w-full opacity-50"
-                viewBox="0 0 100 100"
-                preserveAspectRatio="none"
-            >
-                <path
-                    d="M0 0 V50 Q25 40 50 50 T100 50 V0 Z"
-                    fill="#FFC6D3"
-                />
-                <path
-                    d="M0 100 V60 Q25 70 50 60 T100 60 V100 Z"
-                    fill="#FFC6D3"
-                />
-                {/* Abstract curves to mimic the design */}
-                <path
-                    d="M0 0 C 30 20 70 20 100 0 Z"
-                    fill="rgba(255, 255, 255, 0.1)"
-                />
-                <circle cx="20" cy="30" r="40" fill="rgba(255, 255, 255, 0.05)" />
-                <circle cx="80" cy="70" r="30" fill="rgba(255, 255, 255, 0.05)" />
+        <div className="absolute inset-0 -z-10 overflow-hidden bg-slate-50">
+            {/* Ambient background glows - static for speed optimization (no CPU layout repaints) */}
+            <div className="absolute -top-[10%] -left-[10%] w-[80vw] h-[80vw] rounded-full bg-sky-100/70 blur-[100px] pointer-events-none"></div>
+            <div className="absolute top-[20%] -right-[20%] w-[70vw] h-[70vw] rounded-full bg-blue-100/60 blur-[100px] pointer-events-none"></div>
+            <div className="absolute -bottom-[10%] left-[10%] w-[90vw] h-[90vw] rounded-full bg-teal-50/80 blur-[120px] pointer-events-none"></div>
+
+            {/* Subtle decorative dot grid pattern with low opacity for light mode */}
+            <div 
+                className="absolute inset-0 opacity-[0.03] pointer-events-none"
+                style={{
+                    backgroundImage: 'radial-gradient(circle at 1px 1px, #0284c7 1px, transparent 0)',
+                    backgroundSize: '24px 24px'
+                }}
+            ></div>
+            
+            {/* Elegant pastel decorative paths for light mode depth */}
+            <svg className="absolute inset-0 w-full h-full opacity-30 pointer-events-none" xmlns="http://www.w3.org/2000/svg">
+                <defs>
+                    <linearGradient id="curveGradLight" x1="0%" y1="0%" x2="100%" y2="100%">
+                        <stop offset="0%" stopColor="#0EA5E9" stopOpacity="0.3" />
+                        <stop offset="50%" stopColor="#3B82F6" stopOpacity="0.15" />
+                        <stop offset="100%" stopColor="#0D9488" stopOpacity="0" />
+                    </linearGradient>
+                </defs>
+                <path d="M-100 150 C 200 350, 100 550, 800 350" stroke="url(#curveGradLight)" strokeWidth="1.5" fill="none" />
+                <path d="M-50 250 C 300 450, 200 650, 900 450" stroke="url(#curveGradLight)" strokeWidth="0.75" fill="none" />
             </svg>
-            {/* White wave at the bottom/middle where the form starts */}
-            <div className="absolute bottom-0 left-0 right-0 h-[60%] bg-white rounded-t-[3rem] shadow-2xl"></div>
         </div>
     );
 }

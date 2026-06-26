@@ -4,43 +4,43 @@
 
 @layer base {
   :root {
-    /* Fresh Indigo/Violet Glassmorphism Theme */
-    --background: 240 20% 97%;
-    --foreground: 240 10% 10%;
+    /* Fresh Sky-Blue Glassmorphism Light Theme */
+    --background: 200 60% 98%;
+    --foreground: 215 25% 15%;
 
-    --card: 240 20% 99%;
-    --card-foreground: 240 10% 10%;
+    --card: 200 60% 99%;
+    --card-foreground: 215 25% 15%;
 
-    --popover: 240 20% 99%;
-    --popover-foreground: 240 10% 10%;
+    --popover: 200 60% 99%;
+    --popover-foreground: 215 25% 15%;
 
-    --primary: 250 80% 65%;
-    /* Indigo */
+    --primary: 199 94% 48%;
+    /* Sky Blue */
     --primary-foreground: 0 0% 100%;
 
-    --secondary: 210 100% 80%;
-    /* Blue */
-    --secondary-foreground: 240 10% 10%;
+    --secondary: 200 90% 92%;
+    /* Soft Sky */
+    --secondary-foreground: 215 25% 15%;
 
-    --muted: 240 20% 90%;
-    --muted-foreground: 240 10% 40%;
+    --muted: 200 30% 93%;
+    --muted-foreground: 215 16% 45%;
 
-    --accent: 180 80% 70%;
-    /* Teal/Cyan */
-    --accent-foreground: 240 10% 10%;
+    --accent: 185 85% 75%;
+    /* Soft Teal Accent */
+    --accent-foreground: 215 25% 15%;
 
     --destructive: 0 84.2% 60.2%;
     --destructive-foreground: 210 40% 98%;
 
-    --border: 240 20% 90%;
-    --input: 240 20% 90%;
-    --ring: 250 80% 65%;
+    --border: 200 30% 90%;
+    --input: 200 30% 90%;
+    --ring: 199 94% 48%;
 
     --radius: 1rem;
   }
 
   .dark {
-    /* Premium Slate/Blue Dark Theme */
+    /* Premium Slate/Blue Dark Theme with Sky-Blue Accent Alignment */
     --background: 222.2 84% 4.9%;
     /* Slate 950 */
     --foreground: 210 40% 98%;
@@ -52,8 +52,8 @@
     --popover: 222.2 84% 4.9%;
     --popover-foreground: 210 40% 98%;
 
-    --primary: 217.2 91.2% 59.8%;
-    /* Blue 500 */
+    --primary: 199 94% 48%;
+    /* Sky Blue Accent */
     --primary-foreground: 222.2 47.4% 11.2%;
 
     --secondary: 217.2 32.6% 17.5%;
@@ -71,7 +71,7 @@
 
     --border: 217.2 32.6% 17.5%;
     --input: 217.2 32.6% 17.5%;
-    --ring: 217.2 91.2% 59.8%;
+    --ring: 199 94% 48%;
   }
 }
 

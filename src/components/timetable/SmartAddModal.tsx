@@ -3,6 +3,7 @@ import { Modal } from '../ui/modal';
 import { Button } from '../ui/button';
 import { Input } from '../ui/input';
 import { Plus, Trash2, AlertCircle, CheckCircle2 } from 'lucide-react';
+import { Alert } from '../ui/Alert';
 import { parseCourseEntries, type CourseInput, type ParsedEntry } from '../../lib/ffcs';
 import { collection, writeBatch, doc } from 'firebase/firestore';
 import { db } from '../../lib/firebase';
@@ -18,6 +19,7 @@ interface SmartAddModalProps {
 export function SmartAddModal({ isOpen, onClose, onSuccess }: SmartAddModalProps) {
     const { user } = useAuth();
     const [loading, setLoading] = useState(false);
+    const [error, setError] = useState<string | null>(null);
     const [inputs, setInputs] = useState<CourseInput[]>([
         { subject_name: '', subject_code: '', type: 'theory', slot: '', room_number: '', credit: 0 }
     ]);
@@ -50,6 +52,7 @@ export function SmartAddModal({ isOpen, onClose, onSuccess }: SmartAddModalProps
     const handleSave = async () => {
         if (!user || !preview || preview.errors.length > 0) return;
         setLoading(true);
+        setError(null);
 
         try {
             const batch = writeBatch(db);
@@ -64,9 +67,9 @@ export function SmartAddModal({ isOpen, onClose, onSuccess }: SmartAddModalProps
             // Reset state
             setInputs([{ subject_name: '', subject_code: '', type: 'theory', slot: '', room_number: '', credit: 0 }]);
             setPreview(null);
-        } catch (error) {
-            console.error('Error saving timetable:', error);
-            alert('Failed to save timetable entries.');
+        } catch (err: any) {
+            console.error('Error saving timetable:', err);
+            setError('Failed to save timetable entries.');
         } finally {
             setLoading(false);
         }
@@ -75,6 +78,7 @@ export function SmartAddModal({ isOpen, onClose, onSuccess }: SmartAddModalProps
     return (
         <Modal isOpen={isOpen} onClose={onClose} title="Smart Add (FFCS Slots)" className="max-w-4xl">
             <div className="space-y-6 py-4 max-h-[70vh] overflow-y-auto pr-2">
+                {error && <Alert variant="error" message={error} />}
                 <div className="space-y-4">
                     {inputs.map((input, index) => (
                         <div key={index} className="grid grid-cols-1 md:grid-cols-12 gap-4 items-end p-4 border rounded-lg bg-card">

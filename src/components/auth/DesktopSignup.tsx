@@ -1,19 +1,22 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { signInWithEmailAndPassword } from 'firebase/auth';
-import { auth } from '../../lib/firebase';
+import { createUserWithEmailAndPassword, updateProfile } from 'firebase/auth';
+import { doc, setDoc } from 'firebase/firestore';
+import { auth, db } from '../../lib/firebase';
 import { AuthBackground } from './AuthBackground';
-import { Mail, Lock, Eye, EyeOff, ArrowRight, Clock, CheckCircle2, TrendingUp } from 'lucide-react';
+import { Mail, Lock, Eye, EyeOff, ArrowRight, Clock, CheckCircle2, TrendingUp, User } from 'lucide-react';
 import { Alert } from '../ui/Alert';
 
-export function DesktopLogin() {
+export function DesktopSignup() {
     const navigate = useNavigate();
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
     const [showPassword, setShowPassword] = useState(false);
     const [formData, setFormData] = useState({
+        name: '',
         email: '',
         password: '',
+        confirmPassword: '',
     });
 
     const handleSubmit = async (e: React.FormEvent) => {
@@ -21,13 +24,34 @@ export function DesktopLogin() {
         setLoading(true);
         setError(null);
 
+        if (formData.password !== formData.confirmPassword) {
+            setError("Passwords don't match");
+            setLoading(false);
+            return;
+        }
+
         try {
-            await signInWithEmailAndPassword(auth, formData.email, formData.password);
+            const userCredential = await createUserWithEmailAndPassword(auth, formData.email, formData.password);
+            const user = userCredential.user;
+
+            await updateProfile(user, { displayName: formData.name });
+
+            try {
+                await setDoc(doc(db, 'profiles', user.uid), {
+                    user_id: user.uid,
+                    name: formData.name,
+                });
+            } catch (profileError) {
+                console.error('Error creating profile:', profileError);
+            }
+
             navigate('/dashboard');
         } catch (err: any) {
-            let message = 'Failed to sign in. Please try again.';
-            if (err.code === 'auth/user-not-found' || err.code === 'auth/wrong-password') {
-                message = 'Invalid email or password.';
+            let message = 'Failed to create account. Please try again.';
+            if (err.code === 'auth/email-already-in-use') {
+                message = 'This email is already registered.';
+            } else if (err.code === 'auth/weak-password') {
+                message = 'Password should be at least 6 characters.';
             } else if (err.code === 'auth/invalid-email') {
                 message = 'Please enter a valid email address.';
             }
@@ -44,7 +68,7 @@ export function DesktopLogin() {
             {/* Split Glassmorphic Card Container */}
             <div className="w-full max-w-5xl h-[80vh] max-h-[640px] min-h-[560px] bg-white/30 backdrop-blur-xl rounded-[2.5rem] overflow-hidden flex shadow-2xl border border-white/60 relative">
                 
-                {/* Left Panel: Unique Mock Academic Analytics & Schedule Dashboard */}
+                {/* Left Panel: Unique Mock Academic Analytics & Schedule Dashboard (Shared style with DesktopLogin) */}
                 <div className="w-[55%] bg-gradient-to-br from-white/70 to-sky-100/40 p-10 flex flex-col justify-between border-r border-slate-200/50 relative overflow-hidden">
                     {/* Glowing decorative shape inside panel */}
                     <div className="absolute -top-[10%] -left-[10%] w-60 h-60 rounded-full bg-sky-200/40 blur-3xl pointer-events-none"></div>
@@ -64,10 +88,10 @@ export function DesktopLogin() {
                     <div className="my-auto space-y-5 relative z-10 max-w-md w-full">
                         <div className="space-y-1">
                             <span className="bg-sky-100 text-sky-700 text-[10px] font-bold px-3 py-1 rounded-full uppercase tracking-wider">
-                                Dashboard Mockup
+                                Start Your Journey
                             </span>
                             <h2 className="text-3xl font-extrabold text-slate-800 tracking-tight leading-tight pt-1">
-                                Your Academic Life, Visualized.
+                                Create an account to unlock your potential.
                             </h2>
                         </div>
 
@@ -152,20 +176,38 @@ export function DesktopLogin() {
                     </div>
                 </div>
 
-                {/* Right Panel: Sign-in Form */}
-                <div className="w-[45%] bg-white p-12 flex flex-col justify-center relative">
+                {/* Right Panel: Sign-up Form */}
+                <div className="w-[45%] bg-white p-10 flex flex-col justify-center relative overflow-y-auto">
                     {/* Ambient subtle shape on right side */}
                     <div className="absolute -bottom-[10%] -right-[10%] w-48 h-48 rounded-full bg-blue-50 blur-3xl pointer-events-none"></div>
 
                     <div className="w-full max-w-sm mx-auto z-10">
-                        <div className="mb-8">
-                            <h2 className="text-3xl font-bold text-slate-800">Login</h2>
-                            <p className="text-slate-400 text-sm mt-1.5">Welcome back! Access your account.</p>
+                        <div className="mb-6">
+                            <h2 className="text-3xl font-bold text-slate-800">Sign Up</h2>
+                            <p className="text-slate-400 text-sm mt-1">Create an account to get started.</p>
                         </div>
 
-                        <form onSubmit={handleSubmit} className="space-y-5">
+                        <form onSubmit={handleSubmit} className="space-y-4">
+                            {/* Full Name */}
+                            <div className="space-y-1">
+                                <label className="text-xs font-bold tracking-wider text-slate-400 uppercase">Full Name</label>
+                                <div className="relative">
+                                    <div className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400">
+                                        <User size={18} />
+                                    </div>
+                                    <input
+                                        type="text"
+                                        placeholder="Enter your name"
+                                        className="w-full bg-white border border-slate-200/80 rounded-2xl py-3.5 pl-11 pr-4 text-slate-800 placeholder:text-slate-400 focus:outline-none focus:border-sky-400 focus:ring-1 focus:ring-sky-400 transition-colors text-sm shadow-sm"
+                                        value={formData.name}
+                                        onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                                        required
+                                    />
+                                </div>
+                            </div>
+
                             {/* Email */}
-                            <div className="space-y-1.5">
+                            <div className="space-y-1">
                                 <label className="text-xs font-bold tracking-wider text-slate-400 uppercase">Email Address</label>
                                 <div className="relative">
                                     <div className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400">
@@ -183,7 +225,7 @@ export function DesktopLogin() {
                             </div>
 
                             {/* Password */}
-                            <div className="space-y-1.5">
+                            <div className="space-y-1">
                                 <label className="text-xs font-bold tracking-wider text-slate-400 uppercase">Password</label>
                                 <div className="relative">
                                     <div className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400">
@@ -191,7 +233,7 @@ export function DesktopLogin() {
                                     </div>
                                     <input
                                         type={showPassword ? "text" : "password"}
-                                        placeholder="Enter your password"
+                                        placeholder="Create a password"
                                         className="w-full bg-white border border-slate-200/80 rounded-2xl py-3.5 pl-11 pr-12 text-slate-800 placeholder:text-slate-400 focus:outline-none focus:border-sky-400 focus:ring-1 focus:ring-sky-400 transition-colors text-sm shadow-sm"
                                         value={formData.password}
                                         onChange={(e) => setFormData({ ...formData, password: e.target.value })}
@@ -205,10 +247,23 @@ export function DesktopLogin() {
                                         {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
                                     </button>
                                 </div>
-                                <div className="flex justify-end pt-0.5">
-                                    <Link to="/reset-password" className="text-xs text-sky-600 hover:text-sky-700 font-semibold transition-colors">
-                                        Forgot Password?
-                                    </Link>
+                            </div>
+
+                            {/* Confirm Password */}
+                            <div className="space-y-1">
+                                <label className="text-xs font-bold tracking-wider text-slate-400 uppercase">Confirm Password</label>
+                                <div className="relative">
+                                    <div className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400">
+                                        <Lock size={18} />
+                                    </div>
+                                    <input
+                                        type="password"
+                                        placeholder="Confirm your password"
+                                        className="w-full bg-white border border-slate-200/80 rounded-2xl py-3.5 pl-11 pr-4 text-slate-800 placeholder:text-slate-400 focus:outline-none focus:border-sky-400 focus:ring-1 focus:ring-sky-400 transition-colors text-sm shadow-sm"
+                                        value={formData.confirmPassword}
+                                        onChange={(e) => setFormData({ ...formData, confirmPassword: e.target.value })}
+                                        required
+                                    />
                                 </div>
                             </div>
 
@@ -227,20 +282,20 @@ export function DesktopLogin() {
                                             <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
                                             <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
                                         </svg>
-                                        Logging in...
+                                        Creating account...
                                     </span>
                                 ) : (
                                     <>
-                                        Sign In to Web App <ArrowRight size={16} className="ml-1" />
+                                        Register Account <ArrowRight size={16} className="ml-1" />
                                     </>
                                 )}
                             </button>
 
                             {/* Footer links */}
-                            <div className="text-center text-xs text-slate-400 pt-4">
-                                Don't have an account?{' '}
-                                <Link to="/signup" className="text-sky-600 font-bold hover:text-sky-700 transition-colors">
-                                    Register Now
+                            <div className="text-center text-xs text-slate-400 pt-3">
+                                Already have an account?{' '}
+                                <Link to="/login" className="text-sky-600 font-bold hover:text-sky-700 transition-colors">
+                                    Sign In
                                 </Link>
                             </div>
                         </form>

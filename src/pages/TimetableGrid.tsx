@@ -7,7 +7,6 @@ import { ArrowLeft, Download } from 'lucide-react';
 import { EditClassModal } from '../components/timetable/EditClassModal';
 import { SEO } from '../components/SEO';
 import { useNavigate } from 'react-router-dom';
-import html2canvas from 'html2canvas';
 import { formatTimeTo12Hr } from '../lib/time';
 
 interface TimetableEntry {
@@ -157,6 +156,7 @@ export function TimetableGrid() {
             const isDark = document.documentElement.classList.contains('dark');
             const bgColor = isDark ? '#020617' : '#f8f8fd';
 
+            const html2canvas = (await import('html2canvas')).default;
             const canvas = await html2canvas(gridElement, {
                 useCORS: true,
                 scale: 2,
@@ -291,7 +291,7 @@ export function TimetableGrid() {
                                                             setSelectedEntryForEdit(matchedEntry);
                                                             setIsEditClassOpen(true);
                                                         }}
-                                                        className="border border-white/10 p-1 text-center bg-[#ff4d79] text-white font-bold text-[10px] md:text-[11px] leading-tight cursor-pointer hover:scale-[1.02] active:scale-95 transition-all shadow-md rounded-md hover:z-10"
+                                                        className="border border-white/10 p-1 text-center bg-primary text-white font-bold text-[10px] md:text-[11px] leading-tight cursor-pointer hover:scale-[1.02] active:scale-95 transition-all shadow-md rounded-md hover:z-10"
                                                         title={`Subject: ${matchedEntry.subject_name}`}
                                                     >
                                                         {formatCellContent(slot, matchedEntry)}
@@ -337,7 +337,7 @@ export function TimetableGrid() {
                                                             setSelectedEntryForEdit(matchedEntry);
                                                             setIsEditClassOpen(true);
                                                         }}
-                                                        className="border border-white/10 p-1 text-center bg-[#ff4d79] text-white font-bold text-[10px] md:text-[11px] leading-tight cursor-pointer hover:scale-[1.02] active:scale-95 transition-all shadow-md rounded-md hover:z-10"
+                                                        className="border border-white/10 p-1 text-center bg-primary text-white font-bold text-[10px] md:text-[11px] leading-tight cursor-pointer hover:scale-[1.02] active:scale-95 transition-all shadow-md rounded-md hover:z-10"
                                                         title={`Subject: ${matchedEntry.subject_name}`}
                                                     >
                                                         {formatCellContent(slot, matchedEntry)}

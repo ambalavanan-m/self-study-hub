@@ -3,7 +3,8 @@ import { Link, useNavigate } from 'react-router-dom';
 import { signInWithEmailAndPassword } from 'firebase/auth';
 import { auth } from '../../lib/firebase';
 import { AuthBackground } from './AuthBackground';
-import { ArrowRight, Eye, EyeOff } from 'lucide-react';
+import { ArrowRight, Eye, EyeOff, Mail, Lock } from 'lucide-react';
+import { Alert } from '../ui/Alert';
 
 export function MobileLogin() {
     const navigate = useNavigate();
@@ -24,37 +25,55 @@ export function MobileLogin() {
             await signInWithEmailAndPassword(auth, formData.email, formData.password);
             navigate('/dashboard');
         } catch (err: any) {
-            setError(err.message);
+            let message = 'Failed to sign in. Please try again.';
+            if (err.code === 'auth/user-not-found' || err.code === 'auth/wrong-password') {
+                message = 'Invalid email or password.';
+            } else if (err.code === 'auth/invalid-email') {
+                message = 'Please enter a valid email address.';
+            }
+            setError(message);
         } finally {
             setLoading(false);
         }
     };
 
     return (
-        <div className="relative min-h-screen w-full overflow-hidden font-sans text-zinc-800">
+        <div className="relative h-screen max-h-screen w-full overflow-hidden flex items-center justify-center px-6 font-sans bg-slate-50 text-slate-800">
             <AuthBackground />
 
-            <div className="relative z-10 flex min-h-screen flex-col px-8 pt-32">
-                {/* Header Section */}
-                <div className="mb-12">
-                    <h1 className="text-4xl font-bold text-white mb-2">Welcome</h1>
-                    <p className="text-white/80 text-sm">
-                        to Ambalavanan Self Study
+            <div className="relative z-10 w-full max-w-md flex flex-col">
+                {/* Logo & Branding */}
+                <div className="flex flex-col items-center mb-6">
+                    <div className="h-14 w-14 flex items-center justify-center overflow-hidden rounded-2xl bg-white border border-slate-200/60 p-2.5 shadow-md mb-3">
+                        <img src="/logo.png" alt="Logo" className="w-full h-full object-contain" />
+                    </div>
+                    <h1 className="text-2xl font-bold text-slate-800 tracking-wide text-center">
+                        Ambalavanan
+                    </h1>
+                    <p className="text-slate-500 text-xs font-semibold tracking-wider uppercase mt-0.5">
+                        Self Study Hub
                     </p>
                 </div>
 
-                {/* Form Section - Positioned to overlap the white wave */}
-                <div className="mt-auto pb-12">
-                    <h2 className="text-3xl font-bold mb-8 text-zinc-900">Sign in</h2>
+                {/* Form Card - Frosted Light Glassmorphism */}
+                <div className="w-full bg-white/80 backdrop-blur-xl rounded-[2rem] border border-white/60 p-6 sm:p-8 shadow-xl shadow-sky-900/5">
+                    <div className="mb-6">
+                        <h2 className="text-2xl font-bold text-slate-800">Sign In</h2>
+                        <p className="text-slate-500 text-xs mt-1">Access your academic tracker and dashboard</p>
+                    </div>
 
-                    <form onSubmit={handleSubmit} className="space-y-6">
-                        <div className="space-y-2">
-                            <label className="text-sm font-medium text-zinc-600">Email</label>
+                    <form onSubmit={handleSubmit} className="space-y-5">
+                        {/* Email Field */}
+                        <div className="space-y-1.5">
+                            <label className="text-xs font-semibold tracking-wide text-slate-500 uppercase">Email</label>
                             <div className="relative">
+                                <div className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400">
+                                    <Mail size={18} />
+                                </div>
                                 <input
                                     type="email"
-                                    placeholder="demo@email.com"
-                                    className="w-full border-b border-zinc-300 py-2 text-zinc-900 placeholder:text-zinc-400 focus:border-[#FF8BA7] focus:outline-none bg-transparent"
+                                    placeholder="Enter your email"
+                                    className="w-full bg-white border border-slate-200/80 rounded-2xl py-3.5 pl-11 pr-4 text-slate-800 placeholder:text-slate-400 focus:outline-none focus:border-sky-400 focus:ring-1 focus:ring-sky-400 transition-colors text-sm shadow-sm"
                                     value={formData.email}
                                     onChange={(e) => setFormData({ ...formData, email: e.target.value })}
                                     required
@@ -62,13 +81,17 @@ export function MobileLogin() {
                             </div>
                         </div>
 
-                        <div className="space-y-2">
-                            <label className="text-sm font-medium text-zinc-600">Password</label>
+                        {/* Password Field */}
+                        <div className="space-y-1.5">
+                            <label className="text-xs font-semibold tracking-wide text-slate-500 uppercase">Password</label>
                             <div className="relative">
+                                <div className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400">
+                                    <Lock size={18} />
+                                </div>
                                 <input
                                     type={showPassword ? "text" : "password"}
-                                    placeholder="enter your password"
-                                    className="w-full border-b border-zinc-300 py-2 text-zinc-900 placeholder:text-zinc-400 focus:border-[#FF8BA7] focus:outline-none bg-transparent"
+                                    placeholder="Enter your password"
+                                    className="w-full bg-white border border-slate-200/80 rounded-2xl py-3.5 pl-11 pr-12 text-slate-800 placeholder:text-slate-400 focus:outline-none focus:border-sky-400 focus:ring-1 focus:ring-sky-400 transition-colors text-sm shadow-sm"
                                     value={formData.password}
                                     onChange={(e) => setFormData({ ...formData, password: e.target.value })}
                                     required
@@ -76,46 +99,59 @@ export function MobileLogin() {
                                 <button
                                     type="button"
                                     onClick={() => setShowPassword(!showPassword)}
-                                    className="absolute right-0 top-2 text-zinc-400"
+                                    className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 transition-colors"
                                 >
                                     {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
                                 </button>
                             </div>
                         </div>
 
-                        <div className="flex items-center justify-between text-xs">
-                            <label className="flex items-center gap-2 text-zinc-600">
-                                <input type="checkbox" className="rounded border-zinc-300 text-[#FF8BA7] focus:ring-[#FF8BA7]" />
+                        {/* Actions Row */}
+                        <div className="flex items-center justify-between text-xs pt-1">
+                            <label className="flex items-center gap-2 cursor-pointer select-none text-slate-500 hover:text-slate-800 transition-colors">
+                                <input 
+                                    type="checkbox" 
+                                    className="rounded border-slate-300 text-sky-500 focus:ring-sky-500 h-4 w-4 transition-colors" 
+                                />
                                 Remember Me
                             </label>
-                            <Link to="/reset-password" className="text-[#FF8BA7] font-medium">
+                            <Link to="/reset-password" className="text-sky-600 hover:text-sky-700 font-semibold transition-colors">
                                 Forgot Password?
                             </Link>
                         </div>
 
-                        {error && <p className="text-sm text-red-500">{error}</p>}
+                        {/* Error Alert */}
+                        {error && <Alert variant="error" message={error} />}
 
+                        {/* Submit Button */}
                         <button
                             type="submit"
                             disabled={loading}
-                            className="w-full rounded-full bg-[#FF8BA7] py-4 text-white font-semibold shadow-lg hover:bg-[#ff7a9a] transition-colors disabled:opacity-50"
+                            className="w-full rounded-2xl bg-gradient-to-r from-sky-400 to-blue-500 py-3.5 text-white font-semibold shadow-lg shadow-sky-400/20 hover:from-sky-500 hover:to-blue-600 active:scale-[0.98] transition-all disabled:opacity-50 disabled:pointer-events-none mt-2 flex items-center justify-center gap-2"
                         >
-                            {loading ? 'Logging in...' : 'Login'}
+                            {loading ? (
+                                <span className="flex items-center gap-2">
+                                    <svg className="animate-spin h-5 w-5 text-white" fill="none" viewBox="0 0 24 24">
+                                        <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+                                        <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
+                                    </svg>
+                                    Signing In...
+                                </span>
+                            ) : (
+                                <>
+                                    Sign In <ArrowRight size={16} className="ml-1" />
+                                </>
+                            )}
                         </button>
 
-                        <div className="text-center text-xs text-zinc-500 mt-4">
-                            Don't have an Account ?{' '}
-                            <Link to="/signup" className="text-[#FF8BA7] font-bold">
-                                Sign up
+                        {/* Switch Page Link */}
+                        <div className="text-center text-xs text-slate-400 pt-2">
+                            Don't have an account?{' '}
+                            <Link to="/signup" className="text-sky-600 font-bold hover:text-sky-700 transition-colors">
+                                Register Now
                             </Link>
                         </div>
                     </form>
-                </div>
-                {/* Floating Action Button for "Continue" - mimicking the design */}
-                <div className="absolute top-[45%] right-8 transform -translate-y-1/2">
-                    <button onClick={handleSubmit} className="flex items-center gap-2 text-white/90 text-sm font-medium">
-                        Continue <div className="bg-white/20 p-2 rounded-full backdrop-blur-sm"><ArrowRight size={16} /></div>
-                    </button>
                 </div>
             </div>
         </div>

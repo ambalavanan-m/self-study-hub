@@ -6,8 +6,6 @@ import { Button } from '../components/ui/button';
 import { Input } from '../components/ui/input';
 import { Card } from '../components/ui/card';
 import { User, Lock, Download, Upload, FileJson, FileText, LogOut } from 'lucide-react';
-import { exportCGPA, exportTimetable } from '../lib/export';
-import { importCGPA, importTimetable } from '../lib/import';
 import { ThemeToggle } from '../components/ThemeToggle';
 import { SEO } from '../components/SEO';
 
@@ -58,6 +56,7 @@ export function Profile() {
     const handleExport = async (type: 'cgpa' | 'timetable', format: 'json' | 'pdf') => {
         if (!user) return;
         try {
+            const { exportCGPA, exportTimetable } = await import('../lib/export');
             if (type === 'cgpa') await exportCGPA({ format, userId: user.uid });
             if (type === 'timetable') await exportTimetable({ format, userId: user.uid });
             setMessage({ type: 'success', text: `${type.toUpperCase()} exported successfully` });
@@ -72,6 +71,7 @@ export function Profile() {
         const file = e.target.files[0];
 
         try {
+            const { importCGPA, importTimetable } = await import('../lib/import');
             if (type === 'cgpa') await importCGPA({ file, userId: user.uid });
             if (type === 'timetable') await importTimetable({ file, userId: user.uid });
             setMessage({ type: 'success', text: `${type.toUpperCase()} imported successfully` });
