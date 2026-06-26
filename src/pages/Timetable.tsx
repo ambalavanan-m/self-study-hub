@@ -50,6 +50,8 @@ export function Timetable() {
         return ['Saturday', 'Sunday'].includes(today) ? 'Monday' : today;
     });
 
+    const days = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri'];
+
     const fetchTimetable = async () => {
         if (!user) return;
         try {
