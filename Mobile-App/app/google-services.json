@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "345149702165",
+    "project_id": "study-hub-007",
+    "storage_bucket": "study-hub-007.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:345149702165:android:ebf7bb7b9c3f75e76c8e1c",
+        "android_client_info": {
+          "package_name": "com.selfstudy"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBVTnQGxcTM50tW-dVYBER0YHuBCNLP-Yk"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

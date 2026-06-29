@@ -13,11 +13,11 @@ import { SEO } from '../components/SEO';
 import { formatTimeTo12Hr, DAYS } from '../lib/time';
 
 const dayLabels: Record<typeof DAYS[number], string> = {
-    'Monday': 'mon',
-    'Tuesday': 'tue',
-    'Wednesday': 'web',
-    'Thursday': 'thu',
-    'Friday': 'fri'
+    'Monday': 'Mon',
+    'Tuesday': 'Tue',
+    'Wednesday': 'Web',
+    'Thursday': 'Thu',
+    'Friday': 'Fri'
 };
 
 

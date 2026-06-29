@@ -1,0 +1,6 @@
+{
+  "name": "Self Study Hub",
+  "description": "A comprehensive Academic Life Manager including a weekly timetable, CGPA tracker, task manager, notes planner, and Pomodoro focus timer.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
