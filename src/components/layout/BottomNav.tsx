@@ -1,3 +1,4 @@
+import { useState, useEffect, useRef } from 'react';
 import { NavLink } from 'react-router-dom';
 import {
     LayoutDashboard,
@@ -9,6 +10,36 @@ import {
 import { cn } from '../../lib/utils';
 
 export function BottomNav() {
+    const [isVisible, setIsVisible] = useState(true);
+    const lastScrollY = useRef(0);
+
+    useEffect(() => {
+        const handleScroll = () => {
+            const currentScrollY = window.scrollY;
+            
+            // At the top of the page, always show
+            if (currentScrollY < 40) {
+                setIsVisible(true);
+                lastScrollY.current = currentScrollY;
+                return;
+            }
+
+            // If scrolling down by more than 10px, hide
+            if (currentScrollY > lastScrollY.current + 10) {
+                setIsVisible(false);
+            } 
+            // If scrolling up by more than 10px, show
+            else if (currentScrollY < lastScrollY.current - 10) {
+                setIsVisible(true);
+            }
+
+            lastScrollY.current = currentScrollY;
+        };
+
+        window.addEventListener('scroll', handleScroll, { passive: true });
+        return () => window.removeEventListener('scroll', handleScroll);
+    }, []);
+
     const primaryLinks = [
         { to: '/dashboard', icon: LayoutDashboard, label: 'Dashboard' },
         { to: '/cgpa', icon: GraduationCap, label: 'CGPA' },
@@ -18,7 +49,14 @@ export function BottomNav() {
     ];
 
     return (
-        <div className="fixed bottom-6 left-1/2 -translate-x-1/2 z-50 w-auto max-w-[95vw] bottom-nav">
+        <div 
+            className={cn(
+                "fixed bottom-6 left-1/2 -translate-x-1/2 z-50 w-auto max-w-[95vw] bottom-nav transition-all duration-300 ease-in-out",
+                isVisible 
+                    ? "translate-y-0 opacity-100 pointer-events-auto" 
+                    : "translate-y-28 opacity-0 pointer-events-none"
+            )}
+        >
             {/* Main Navigation Bar */}
             <nav className="glass rounded-full px-3 py-2.5 sm:px-4 sm:py-3 flex items-center gap-0.5 sm:gap-1 shadow-xxl ring-1 ring-white/20">
                 {primaryLinks.map((link) => (
@@ -42,4 +80,5 @@ export function BottomNav() {
         </div>
     );
 }
+
 

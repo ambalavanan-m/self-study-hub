@@ -7,7 +7,7 @@ import { LiveClock } from '../components/dashboard/LiveClock';
 import { Calendar, Video, PieChart, User } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { SEO } from '../components/SEO';
-import { calculateGPA } from '../lib/cgpa';
+import { calculateCGPA, type Semester, type Subject } from '../lib/cgpa';
 import { formatTimeTo12Hr } from '../lib/time';
 
 export function Dashboard() {
@@ -20,40 +20,40 @@ export function Dashboard() {
     const [schedule, setSchedule] = useState<any[]>([]);
     const [ongoingClass, setOngoingClass] = useState<any>(null);
 
-
     useEffect(() => {
         async function fetchDashboardData() {
             if (!user) return;
 
             try {
+                const semestersQuery = query(collection(db, 'semesters'), where('user_id', '==', user.uid));
+                const semestersSnapshot = await getDocs(semestersQuery);
+                const semestersData = semestersSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+
                 const subjectsQuery = query(collection(db, 'subjects'), where('user_id', '==', user.uid));
                 const subjectsSnapshot = await getDocs(subjectsQuery);
-                const allSubjects = subjectsSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() as any }));
+                const subjectsData = subjectsSnapshot.docs.map(doc => ({ 
+                    id: doc.id, 
+                    ...doc.data(),
+                    credit: Number((doc.data() as any).credit) || 0
+                })) as (Subject & { semester_id: string })[];
 
-                // Calculate total credits and CGPA
+                const combined = semestersData.map(sem => ({
+                    ...sem,
+                    subjects: subjectsData.filter((sub) => sub.semester_id === sem.id)
+                })) as unknown as Semester[];
+
+                const allValidSubjects = combined.flatMap(s => s.subjects);
+                const cgpa = calculateCGPA(combined);
+
                 let totalCredits = 0;
-
-                if (allSubjects && allSubjects.length > 0) {
-                    allSubjects.forEach((subject) => {
-                        if (subject.grade && subject.credit) {
-                            const credit = parseFloat(subject.credit);
-                            // Only exclude absent subjects from earned credits
-                            if (subject.grade !== 'A_ABSENT') {
-                                totalCredits += credit;
-                            }
-                        }
-                    });
-                }
-
-                // Make sure subject.credit is parsed to a number for calculateGPA
-                const formattedSubjects = allSubjects.map(sub => ({
-                    ...sub,
-                    credit: parseFloat(sub.credit)
-                }));
-                const cgpa = calculateGPA(formattedSubjects);
+                allValidSubjects.forEach((subject) => {
+                    if (subject.grade !== 'A_ABSENT') {
+                        totalCredits += (Number(subject.credit) || 0);
+                    }
+                });
 
                 setStats({
-                    cgpa: parseFloat(cgpa.toFixed(2)),
+                    cgpa: Number(cgpa.toFixed(2)),
                     credits: totalCredits,
                 });
 

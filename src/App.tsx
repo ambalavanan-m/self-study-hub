@@ -13,6 +13,8 @@ const Timetable = lazy(() => import('./pages/Timetable').then(m => ({ default: m
 const Profile = lazy(() => import('./pages/Profile').then(m => ({ default: m.Profile })));
 const UpdatePassword = lazy(() => import('./pages/UpdatePassword').then(m => ({ default: m.UpdatePassword })));
 const TimetableGrid = lazy(() => import('./pages/TimetableGrid').then(m => ({ default: m.TimetableGrid })));
+const GradesView = lazy(() => import('./pages/GradesView').then(m => ({ default: m.GradesView })));
+const Curriculum = lazy(() => import('./pages/Curriculum').then(m => ({ default: m.Curriculum })));
 
 function ProtectedRoute({ children }: { children: React.ReactNode }) {
   const { user, loading } = useAuth();
@@ -61,6 +63,10 @@ function App() {
           >
             <Route path="/dashboard" element={<Dashboard />} />
             <Route path="/cgpa" element={<CGPA />} />
+            <Route path="/cgpa/grades" element={<GradesView />} />
+            <Route path="/grades-view" element={<GradesView />} />
+            <Route path="/curriculum" element={<Curriculum />} />
+            <Route path="/cgpa/curriculum" element={<Curriculum />} />
             <Route path="/timetable" element={<Timetable />} />
             <Route path="/timetable-grid" element={<TimetableGrid />} />
             <Route path="/profile" element={<Profile />} />

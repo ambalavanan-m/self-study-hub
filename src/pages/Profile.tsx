@@ -5,13 +5,15 @@ import { auth } from '../lib/firebase';
 import { Button } from '../components/ui/button';
 import { Input } from '../components/ui/input';
 import { Card } from '../components/ui/card';
-import { User, Lock, Download, Upload, FileJson, FileText, LogOut } from 'lucide-react';
+import { User, Lock, Download, Upload, FileJson, FileText, LogOut, Sliders, Sparkles } from 'lucide-react';
 import { ThemeToggle } from '../components/ThemeToggle';
 import { SEO } from '../components/SEO';
+import { CustomPDFModal } from '../components/profile/CustomPDFModal';
 
 export function Profile() {
     const { user, signOut } = useAuth();
     const [loading, setLoading] = useState(false);
+    const [isCustomPDFModalOpen, setIsCustomPDFModalOpen] = useState(false);
     const [message, setMessage] = useState<{ type: 'success' | 'error', text: string } | null>(null);
     const [formData, setFormData] = useState({
         name: user?.displayName || '',
@@ -198,6 +200,29 @@ export function Profile() {
                         Export your data to JSON or PDF, or import data from JSON backups.
                     </p>
 
+                    {/* Master Custom PDF Builder Card */}
+                    <div className="space-y-3 p-4 bg-gradient-to-br from-primary/10 via-primary/5 to-transparent border border-primary/30 rounded-2xl">
+                        <div className="flex items-start justify-between gap-2">
+                            <div>
+                                <h3 className="font-bold text-base flex items-center gap-2 text-foreground">
+                                    <Sparkles className="h-4 w-4 text-primary" />
+                                    Custom Academic PDF Report
+                                </h3>
+                                <p className="text-xs text-muted-foreground mt-0.5">
+                                    Generate a personalized PDF with customizable sections: CGPA, Grade Distribution, and Curriculum Baskets.
+                                </p>
+                            </div>
+                        </div>
+                        <Button 
+                            variant="primary" 
+                            size="sm" 
+                            className="w-full sm:w-auto gap-2"
+                            onClick={() => setIsCustomPDFModalOpen(true)}
+                        >
+                            <Sliders className="h-4 w-4" /> Customize & Export PDF
+                        </Button>
+                    </div>
+
                     {/* CGPA */}
                     <div className="space-y-3 p-4 glass border border-white/20 rounded-2xl">
                         <h3 className="font-medium">CGPA & Grades</h3>
@@ -206,7 +231,7 @@ export function Profile() {
                                 <FileJson className="mr-2 h-4 w-4" /> Export JSON
                             </Button>
                             <Button variant="outline" size="sm" onClick={() => handleExport('cgpa', 'pdf')}>
-                                <FileText className="mr-2 h-4 w-4" /> Export PDF
+                                <FileText className="mr-2 h-4 w-4" /> Quick PDF
                             </Button>
                             <Button variant="secondary" size="sm" onClick={() => cgpaInputRef.current?.click()}>
                                 <Upload className="mr-2 h-4 w-4" /> Import JSON
@@ -229,7 +254,7 @@ export function Profile() {
                                 <FileJson className="mr-2 h-4 w-4" /> Export JSON
                             </Button>
                             <Button variant="outline" size="sm" onClick={() => handleExport('timetable', 'pdf')}>
-                                <FileText className="mr-2 h-4 w-4" /> Export PDF
+                                <FileText className="mr-2 h-4 w-4" /> Quick PDF
                             </Button>
                             <Button variant="secondary" size="sm" onClick={() => timetableInputRef.current?.click()}>
                                 <Upload className="mr-2 h-4 w-4" /> Import JSON
@@ -245,8 +270,13 @@ export function Profile() {
                     </div>
 
                 </div>
-                </Card>
+            </Card>
             </div>
+
+            <CustomPDFModal
+                isOpen={isCustomPDFModalOpen}
+                onClose={() => setIsCustomPDFModalOpen(false)}
+            />
         </div>
     );
 }
