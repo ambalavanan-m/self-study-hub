@@ -135,6 +135,8 @@ export interface Subject {
     grade: Grade;
     credit: number;
     basket?: CurriculumBasketKey;
+    semester_id?: string;
+    user_id?: string;
 }
 
 export interface Semester {

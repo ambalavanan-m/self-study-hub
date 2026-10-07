@@ -4,7 +4,7 @@ import { collection, query, where, getDocs } from 'firebase/firestore';
 import { db } from '../lib/firebase';
 import { TodaySchedule } from '../components/dashboard/TodaySchedule';
 import { LiveClock } from '../components/dashboard/LiveClock';
-import { Calendar, Video, PieChart, User } from 'lucide-react';
+import { Calendar, Video, PieChart, User, Award } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { SEO } from '../components/SEO';
 import { calculateCGPA, type Semester, type Subject } from '../lib/cgpa';
@@ -178,16 +178,18 @@ export function Dashboard() {
             </div>
 
             {/* Stats */}
-            <div className="grid grid-cols-2 gap-4">
-                <div className="rounded-3xl glass p-6 shadow-sm border border-border/50 flex flex-col justify-between">
-                    <div className="flex justify-between items-start mb-4">
-                        <h3 className="font-bold text-sm text-muted-foreground">Current CGPA</h3>
-                        <div className="h-8 w-8 rounded-full bg-secondary flex items-center justify-center text-primary">
-                            <PieChart className="h-4 w-4" />
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                <Link to="/cgpa">
+                    <div className="rounded-3xl glass p-6 shadow-sm border border-border/50 flex flex-col justify-between hover:shadow-md transition-all h-full group">
+                        <div className="flex justify-between items-start mb-4">
+                            <h3 className="font-bold text-sm text-muted-foreground">Current CGPA</h3>
+                            <div className="h-8 w-8 rounded-full bg-secondary flex items-center justify-center text-primary group-hover:scale-110 transition-transform">
+                                <PieChart className="h-4 w-4" />
+                            </div>
                         </div>
+                        <div className="text-4xl font-black tracking-tighter">{stats.cgpa.toFixed(2)}</div>
                     </div>
-                    <div className="text-4xl font-black tracking-tighter">{stats.cgpa.toFixed(2)}</div>
-                </div>
+                </Link>
                 <div className="rounded-3xl glass p-6 shadow-sm border border-border/50 flex flex-col justify-between">
                     <div className="flex justify-between items-start mb-4">
                         <h3 className="font-bold text-sm text-muted-foreground">Total Credits</h3>
@@ -197,6 +199,20 @@ export function Dashboard() {
                     </div>
                     <div className="text-4xl font-black tracking-tighter">{stats.credits}</div>
                 </div>
+                <Link to="/marks">
+                    <div className="rounded-3xl glass p-6 shadow-sm border border-border/50 flex flex-col justify-between hover:shadow-md transition-all h-full group">
+                        <div className="flex justify-between items-start mb-4">
+                            <h3 className="font-bold text-sm text-muted-foreground">Marks Tracker</h3>
+                            <div className="h-8 w-8 rounded-full bg-primary/10 flex items-center justify-center text-primary group-hover:scale-110 transition-transform">
+                                <Award className="h-4 w-4" />
+                            </div>
+                        </div>
+                        <div className="flex items-baseline justify-between mt-2">
+                            <div className="text-sm font-semibold text-primary">Assessments & FAT</div>
+                            <span className="text-xs text-muted-foreground">Track &rarr;</span>
+                        </div>
+                    </div>
+                </Link>
             </div>
 
             {/* Schedule List */}

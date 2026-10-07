@@ -15,6 +15,7 @@ const UpdatePassword = lazy(() => import('./pages/UpdatePassword').then(m => ({ 
 const TimetableGrid = lazy(() => import('./pages/TimetableGrid').then(m => ({ default: m.TimetableGrid })));
 const GradesView = lazy(() => import('./pages/GradesView').then(m => ({ default: m.GradesView })));
 const Curriculum = lazy(() => import('./pages/Curriculum').then(m => ({ default: m.Curriculum })));
+const Marks = lazy(() => import('./pages/Marks').then(m => ({ default: m.Marks })));
 
 function ProtectedRoute({ children }: { children: React.ReactNode }) {
   const { user, loading } = useAuth();
@@ -62,6 +63,7 @@ function App() {
             }
           >
             <Route path="/dashboard" element={<Dashboard />} />
+            <Route path="/marks" element={<Marks />} />
             <Route path="/cgpa" element={<CGPA />} />
             <Route path="/cgpa/grades" element={<GradesView />} />
             <Route path="/grades-view" element={<GradesView />} />

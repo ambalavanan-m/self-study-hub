@@ -1,0 +1,45 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // Helper function to check if the user is authenticated and the document belongs to them
+    function isOwner() {
+      return request.auth != null && request.auth.uid == resource.data.user_id;
+    }
+
+    // Helper function for creating documents to ensure the user sets their own user_id
+    function isCreatingWithOwnerId() {
+      return request.auth != null && request.auth.uid == request.resource.data.user_id;
+    }
+
+    match /semesters/{document=**} {
+      allow read, update, delete: if isOwner();
+      allow create: if isCreatingWithOwnerId();
+    }
+
+    match /subjects/{document=**} {
+      allow read, update, delete: if isOwner();
+      allow create: if isCreatingWithOwnerId();
+    }
+
+    match /timetable_entries/{document=**} {
+      allow read, update, delete: if isOwner();
+      allow create: if isCreatingWithOwnerId();
+    }
+
+    match /smart_timetable_entries/{document=**} {
+      allow read, update, delete: if isOwner();
+      allow create: if isCreatingWithOwnerId();
+    }
+
+    match /course_marks/{document=**} {
+      allow read, update, delete: if isOwner();
+      allow create: if isCreatingWithOwnerId();
+    }
+
+    match /profiles/{userId} {
+      allow read, write: if request.auth != null && request.auth.uid == userId;
+    }
+  }
+}

@@ -5,15 +5,17 @@ import { auth } from '../lib/firebase';
 import { Button } from '../components/ui/button';
 import { Input } from '../components/ui/input';
 import { Card } from '../components/ui/card';
-import { User, Lock, Download, Upload, FileJson, FileText, LogOut, Sliders, Sparkles } from 'lucide-react';
+import { User, Lock, Download, Upload, FileJson, FileText, LogOut, Sliders, Sparkles, Mail } from 'lucide-react';
 import { ThemeToggle } from '../components/ThemeToggle';
 import { SEO } from '../components/SEO';
 import { CustomPDFModal } from '../components/profile/CustomPDFModal';
+import { ChangeEmailModal } from '../components/profile/ChangeEmailModal';
 
 export function Profile() {
     const { user, signOut } = useAuth();
     const [loading, setLoading] = useState(false);
     const [isCustomPDFModalOpen, setIsCustomPDFModalOpen] = useState(false);
+    const [isChangeEmailModalOpen, setIsChangeEmailModalOpen] = useState(false);
     const [message, setMessage] = useState<{ type: 'success' | 'error', text: string } | null>(null);
     const [formData, setFormData] = useState({
         name: user?.displayName || '',
@@ -142,12 +144,31 @@ export function Profile() {
                             required
                         />
 
-                        <Input
-                            label="Email"
-                            value={formData.email}
-                            disabled
-                            className="bg-muted"
-                        />
+                        <div>
+                            <div className="flex items-center justify-between mb-1.5">
+                                <label className="text-sm font-medium leading-none">
+                                    Email Address
+                                </label>
+                                <Button
+                                    type="button"
+                                    variant="outline"
+                                    size="sm"
+                                    onClick={() => setIsChangeEmailModalOpen(true)}
+                                    className="h-7 px-2.5 text-xs gap-1.5 border-primary/30 text-primary hover:bg-primary/10"
+                                >
+                                    <Mail className="h-3.5 w-3.5" />
+                                    Change Email
+                                </Button>
+                            </div>
+                            <Input
+                                value={formData.email}
+                                disabled
+                                className="bg-muted font-medium cursor-not-allowed"
+                            />
+                            <p className="text-[11px] text-muted-foreground mt-1.5">
+                                Your login email address. Click "Change Email" above to update it.
+                            </p>
+                        </div>
                     </div>
 
                     <div className="space-y-4 pt-4 border-t">
@@ -276,6 +297,16 @@ export function Profile() {
             <CustomPDFModal
                 isOpen={isCustomPDFModalOpen}
                 onClose={() => setIsCustomPDFModalOpen(false)}
+            />
+
+            <ChangeEmailModal
+                isOpen={isChangeEmailModalOpen}
+                onClose={() => setIsChangeEmailModalOpen(false)}
+                currentEmail={formData.email}
+                onSuccess={(newEmail) => {
+                    setFormData(prev => ({ ...prev, email: newEmail }));
+                    setMessage({ type: 'success', text: `Email updated successfully to ${newEmail}!` });
+                }}
             />
         </div>
     );

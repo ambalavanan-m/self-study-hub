@@ -3,6 +3,7 @@ import { NavLink } from 'react-router-dom';
 import {
     LayoutDashboard,
     GraduationCap,
+    Award,
     Calendar,
     User,
     Grid
@@ -43,6 +44,7 @@ export function BottomNav() {
     const primaryLinks = [
         { to: '/dashboard', icon: LayoutDashboard, label: 'Dashboard' },
         { to: '/cgpa', icon: GraduationCap, label: 'CGPA' },
+        { to: '/marks', icon: Award, label: 'Marks' },
         { to: '/timetable', icon: Calendar, label: 'Timetable' },
         { to: '/timetable-grid', icon: Grid, label: 'Grid' },
         { to: '/profile', icon: User, label: 'Profile' },
@@ -58,21 +60,21 @@ export function BottomNav() {
             )}
         >
             {/* Main Navigation Bar */}
-            <nav className="glass rounded-full px-3 py-2.5 sm:px-4 sm:py-3 flex items-center gap-0.5 sm:gap-1 shadow-xxl ring-1 ring-white/20">
+            <nav className="glass rounded-full px-2 py-2 sm:px-4 sm:py-3 flex items-center gap-0.5 sm:gap-1 shadow-xxl ring-1 ring-white/20">
                 {primaryLinks.map((link) => (
                     <NavLink
                         key={link.to}
                         to={link.to}
                         className={({ isActive }) =>
                             cn(
-                                "flex flex-col items-center justify-center p-1.5 sm:p-2 rounded-xl transition-all duration-300 min-w-[56px] sm:min-w-[64px]",
+                                "flex flex-col items-center justify-center p-1 sm:p-2 rounded-xl transition-all duration-300 min-w-[50px] sm:min-w-[62px]",
                                 isActive
-                                    ? "bg-primary/20 text-primary scale-110"
+                                    ? "bg-primary/20 text-primary scale-105"
                                     : "text-muted-foreground hover:text-primary hover:bg-white/5"
                             )
                         }
                     >
-                        <link.icon className="h-4 w-5 mb-1" />
+                        <link.icon className="h-4 w-4 sm:h-4 sm:w-5 mb-1" />
                         <span className="text-[10px] font-medium">{link.label}</span>
                     </NavLink>
                 ))}
