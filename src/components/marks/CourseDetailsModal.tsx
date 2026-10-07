@@ -1,6 +1,12 @@
 import { Modal } from '../ui/modal';
 import { Button } from '../ui/button';
-import { type CourseMarkEntry, getGradeBadgeStyle, isSoftSkillsCourse } from '../../lib/marks';
+import {
+    type CourseMarkEntry,
+    getGradeBadgeStyle,
+    isSoftSkillsCourse,
+    calculateLabMarks,
+    getLabBreakdown
+} from '../../lib/marks';
 import {
     BookOpen,
     FlaskConical,
@@ -229,55 +235,154 @@ export function CourseDetailsModal({
                 )}
 
                 {/* Lab Detailed Breakdown */}
-                {!isTheory && lm && (
-                    <div className="space-y-4">
-                        <h4 className="text-xs font-bold text-muted-foreground uppercase tracking-wider flex items-center gap-1.5">
-                            <FlaskConical className="w-4 h-4 text-emerald-500" /> Lab Assessment Scheme
-                        </h4>
+                {!isTheory && lm && (() => {
+                    const breakdown = getLabBreakdown(lm);
+                    const calc = calculateLabMarks(lm);
+                    const is10DAs = lm.pattern === 'da10_nofat';
+                    const isCatFat = lm.pattern === 'cat_fat';
 
-                        <div className="p-4 rounded-xl border border-border/70 bg-card space-y-3">
-                            <div className="flex items-center justify-between text-xs">
-                                <span className="font-bold text-foreground">
-                                    Pattern: {lm.pattern === 'da10_nofat' ? '10 DAs (100 Marks, No FAT)' :
-                                              lm.pattern === 'cat_fat' ? 'CAT 1 & 2 (30) + FAT (40) + DAs' : '6 DAs (60) + Lab FAT (40)'}
-                                </span>
-                                <span className="font-bold text-emerald-600 dark:text-emerald-400">
-                                    Total: {course.total_marks} / 100
-                                </span>
-                            </div>
+                    return (
+                        <div className="space-y-4">
+                            <h4 className="text-xs font-bold text-muted-foreground uppercase tracking-wider flex items-center gap-1.5">
+                                <FlaskConical className="w-4 h-4 text-emerald-500" /> Lab Assessment Breakdown
+                            </h4>
 
-                            {/* DAs Grid */}
-                            <div className="grid grid-cols-3 sm:grid-cols-6 gap-2">
-                                {(lm.pattern === 'da10_nofat' ? [0,1,2,3,4,5,6,7,8,9] : [0,1,2,3,4,5]).map((idx) => (
-                                    <div key={idx} className="p-2 rounded-lg bg-muted/40 border border-border/50 text-center text-xs">
-                                        <div className="text-[10px] text-muted-foreground font-medium">DA {idx + 1}</div>
-                                        <div className="font-bold text-foreground mt-0.5">
-                                            {lm.da_marks?.[idx] !== null && lm.da_marks?.[idx] !== undefined ? lm.da_marks[idx] : '-'}{' '}
-                                            <span className="text-[10px] font-normal text-muted-foreground">/ 10</span>
-                                        </div>
+                            {/* Summary Cards */}
+                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                                <div className="p-3.5 rounded-xl border border-border/70 bg-card space-y-1">
+                                    <div className="flex items-center justify-between text-xs">
+                                        <span className="font-bold text-foreground">Internal Continuous Assessment</span>
+                                        <span className="font-bold text-emerald-600 dark:text-emerald-400 bg-emerald-500/10 px-2 py-0.5 rounded">
+                                            {breakdown.internal_total} / {breakdown.max_internal}
+                                        </span>
                                     </div>
-                                ))}
-                            </div>
+                                    <div className="text-xs text-muted-foreground">
+                                        Pattern: <strong className="text-foreground">{breakdown.pattern_label}</strong>
+                                    </div>
+                                </div>
 
-                            {/* Lab FAT (if applicable) */}
-                            {lm.pattern !== 'da10_nofat' && (
-                                <div className="p-2.5 rounded-lg bg-muted/30 border border-border/50 flex items-center justify-between text-xs">
-                                    <div>
-                                        <span className="font-semibold text-foreground">Lab FAT Score</span>
-                                        {lm.fat_raw !== null && lm.fat_raw !== undefined && (
-                                            <span className="text-[11px] text-muted-foreground ml-2">
-                                                (Raw: <strong className="text-foreground">{lm.fat_raw}</strong> / 50)
-                                            </span>
+                                <div className="p-3.5 rounded-xl border border-border/70 bg-card space-y-1">
+                                    <div className="flex items-center justify-between text-xs">
+                                        <span className="font-bold text-foreground">Lab FAT</span>
+                                        <span className="font-bold text-indigo-600 dark:text-indigo-400 bg-indigo-500/10 px-2 py-0.5 rounded">
+                                            {is10DAs ? 'N/A (No FAT)' : `${breakdown.fat_weight ?? 0} / 40`}
+                                        </span>
+                                    </div>
+                                    <div className="text-xs text-muted-foreground">
+                                        {is10DAs ? (
+                                            '100% evaluated through Continuous DAs'
+                                        ) : (
+                                            <>
+                                                Raw FAT: <strong className="text-foreground">{lm.fat_raw !== null && lm.fat_raw !== undefined ? lm.fat_raw : '-'}</strong> / 50
+                                            </>
                                         )}
                                     </div>
-                                    <span className="font-bold text-emerald-600 dark:text-emerald-400">
-                                        {lm.fat_weight ?? 0} / 40
-                                    </span>
+                                </div>
+                            </div>
+
+                            {/* CATs Section if cat_fat */}
+                            {isCatFat && (
+                                <div className="grid grid-cols-2 gap-3">
+                                    <div className="p-3 rounded-xl border border-border/70 bg-card">
+                                        <div className="flex items-center justify-between text-xs">
+                                            <span className="font-bold text-foreground">Lab CAT 1</span>
+                                            <span className="font-bold text-sky-600 dark:text-sky-400 bg-sky-500/10 px-2 py-0.5 rounded">
+                                                {lm.cat1_weight ?? 0} / 15
+                                            </span>
+                                        </div>
+                                    </div>
+                                    <div className="p-3 rounded-xl border border-border/70 bg-card">
+                                        <div className="flex items-center justify-between text-xs">
+                                            <span className="font-bold text-foreground">Lab CAT 2</span>
+                                            <span className="font-bold text-sky-600 dark:text-sky-400 bg-sky-500/10 px-2 py-0.5 rounded">
+                                                {lm.cat2_weight ?? 0} / 15
+                                            </span>
+                                        </div>
+                                    </div>
                                 </div>
                             )}
+
+                            {/* Digital Assignments Detailed Grid */}
+                            <div className="p-4 rounded-xl border border-border/70 bg-card space-y-3">
+                                <div className="flex items-center justify-between">
+                                    <div>
+                                        <span className="text-xs font-bold text-foreground block">
+                                            {is10DAs ? 'All 10 Digital Assignments (10 x 10 = 100 Marks)' :
+                                             isCatFat ? 'Lab Continuous / DAs Assessment (30 Marks)' :
+                                             'All 6 Digital Assignments (6 x 10 = 60 Marks)'}
+                                        </span>
+                                        <span className="text-[11px] text-muted-foreground">
+                                            Individual scores per assignment
+                                        </span>
+                                    </div>
+                                    <span className="font-bold text-emerald-600 dark:text-emerald-400 bg-emerald-500/10 px-2.5 py-1 rounded-full border border-emerald-500/20 text-xs">
+                                        Sum: {calc.da_total} / {is10DAs ? 100 : isCatFat ? 30 : 60}
+                                    </span>
+                                </div>
+
+                                <div className={cn(
+                                    "grid gap-2",
+                                    is10DAs ? "grid-cols-2 sm:grid-cols-5" : isCatFat ? "grid-cols-3" : "grid-cols-2 sm:grid-cols-6"
+                                )}>
+                                    {(is10DAs ? [0,1,2,3,4,5,6,7,8,9] : isCatFat ? [0,1,2] : [0,1,2,3,4,5]).map((idx) => {
+                                        const val = lm.da_marks?.[idx];
+                                        const isEntered = val !== null && val !== undefined && val !== ('' as any);
+                                        return (
+                                            <div
+                                                key={idx}
+                                                className={cn(
+                                                    "p-2.5 rounded-lg border text-center transition-all",
+                                                    isEntered
+                                                        ? "bg-card border-border/70 shadow-2xs"
+                                                        : "bg-muted/30 border-dashed border-border/50 opacity-70"
+                                                )}
+                                            >
+                                                <div className="text-[11px] text-muted-foreground font-semibold">
+                                                    DA {idx + 1}
+                                                </div>
+                                                <div className="font-black text-foreground text-sm mt-0.5">
+                                                    {isEntered ? val : '-'}{' '}
+                                                    <span className="text-[10px] font-normal text-muted-foreground">/ 10</span>
+                                                </div>
+                                            </div>
+                                        );
+                                    })}
+                                </div>
+                            </div>
+
+                            {/* Lab FAT Card if applicable */}
+                            {!is10DAs && (
+                                <div className="p-3.5 rounded-xl border border-border/70 bg-card space-y-1">
+                                    <div className="flex items-center justify-between text-xs">
+                                        <span className="font-bold text-foreground">Lab FAT (Final Assessment Test)</span>
+                                        <span className="font-bold text-indigo-600 dark:text-indigo-400 bg-indigo-500/10 px-2 py-0.5 rounded">
+                                            {breakdown.fat_weight ?? 0} / 40
+                                        </span>
+                                    </div>
+                                    <div className="text-xs text-muted-foreground">
+                                        Raw FAT: <strong className="text-foreground">{lm.fat_raw !== null && lm.fat_raw !== undefined ? lm.fat_raw : '-'}</strong> / 50
+                                    </div>
+                                </div>
+                            )}
+
+                            {/* Total Equation Banner */}
+                            <div className="p-3 rounded-xl bg-muted/50 border border-border/60 text-xs text-muted-foreground flex flex-wrap items-center justify-between gap-2">
+                                <span>
+                                    {is10DAs ? (
+                                        `Calculation: ${calc.da_total} (DA 1 to 10 Continuous)`
+                                    ) : isCatFat ? (
+                                        `Calculation: ${calc.cat_total} (CAT 1 & 2) + ${calc.da_total} (DAs) + ${breakdown.fat_weight ?? 0} (Lab FAT)`
+                                    ) : (
+                                        `Calculation: ${calc.da_total} (DA 1 to 6) + ${breakdown.fat_weight ?? 0} (Lab FAT)`
+                                    )}
+                                </span>
+                                <span className="font-bold text-foreground">
+                                    = {course.total_marks} / 100 (Rounded)
+                                </span>
+                            </div>
                         </div>
-                    </div>
-                )}
+                    );
+                })()}
 
                 {/* Footer Actions */}
                 <div className="flex items-center justify-end gap-2 pt-3 border-t border-border/50">

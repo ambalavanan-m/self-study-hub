@@ -7,7 +7,8 @@ import {
     type CourseMarkEntry,
     getGradeBadgeStyle,
     formatMarks,
-    isSoftSkillsCourse
+    isSoftSkillsCourse,
+    getLabBreakdown
 } from '../lib/marks';
 import { type Semester, type Subject, type Grade, GRADE_POINTS } from '../lib/cgpa';
 import { Button } from '../components/ui/button';
@@ -788,7 +789,7 @@ export function Marks() {
                                     Lab Courses
                                 </h3>
                                 <span className="text-xs text-muted-foreground">
-                                    Continuous Assessments (DA 1-6 or 1-10) + Lab FAT = 100
+                                    Click any course code to view full breakdown popup
                                 </span>
                             </div>
 
@@ -798,18 +799,15 @@ export function Marks() {
                                         <tr className="border-b border-border/70 bg-muted/40 text-muted-foreground font-semibold">
                                             <th className="py-3 px-4 min-w-[200px]">Course (Click for Details)</th>
                                             <th className="py-3 px-3 text-center min-w-[90px]">Slot / Cr</th>
-                                            <th className="py-3 px-3 text-center min-w-[120px]">Pattern</th>
-                                            <th className="py-3 px-2 text-center min-w-[45px]">DA1</th>
-                                            <th className="py-3 px-2 text-center min-w-[45px]">DA2</th>
-                                            <th className="py-3 px-2 text-center min-w-[45px]">DA3</th>
-                                            <th className="py-3 px-2 text-center min-w-[45px]">DA4</th>
-                                            <th className="py-3 px-2 text-center min-w-[45px]">DA5</th>
-                                            <th className="py-3 px-2 text-center min-w-[45px]">DA6</th>
-                                            <th className="py-3 px-3 text-center min-w-[80px] bg-emerald-500/5 text-emerald-700 dark:text-emerald-300 font-bold">
+                                            <th className="py-3 px-3 text-center min-w-[110px]">Pattern</th>
+                                            <th className="py-3 px-3 text-center min-w-[130px] bg-emerald-500/5 text-emerald-700 dark:text-emerald-300 font-bold">
+                                                Internal
+                                            </th>
+                                            <th className="py-3 px-3 text-center min-w-[90px] bg-indigo-500/5 text-indigo-700 dark:text-indigo-300 font-bold">
                                                 FAT (40)
                                             </th>
-                                            <th className="py-3 px-3 text-center min-w-[90px] font-black">Total</th>
-                                            <th className="py-3 px-3 text-center min-w-[80px]">Grade</th>
+                                            <th className="py-3 px-3 text-center min-w-[100px] font-black text-foreground">Total</th>
+                                            <th className="py-3 px-3 text-center min-w-[90px]">Grade</th>
                                             <th className="py-3 px-3 text-right min-w-[100px]">Actions</th>
                                         </tr>
                                     </thead>
@@ -818,8 +816,7 @@ export function Marks() {
                                             .filter(c => c.type === 'lab')
                                             .map((course) => {
                                                 const lm = course.lab_marks;
-                                                const is10DAs = lm?.pattern === 'da10_nofat';
-                                                const isCatFat = lm?.pattern === 'cat_fat';
+                                                const breakdown = getLabBreakdown(lm);
                                                 const courseGrade = course.grade;
                                                 const gradeStyle = getGradeBadgeStyle(courseGrade);
 
@@ -864,28 +861,34 @@ export function Marks() {
                                                         {/* Pattern Badge */}
                                                         <td className="py-3 px-3 text-center">
                                                             <span className="text-[10px] font-medium px-2 py-0.5 rounded-full bg-emerald-500/10 text-emerald-700 dark:text-emerald-300 border border-emerald-500/20">
-                                                                {is10DAs ? '10 DAs (100)' : isCatFat ? 'CATs + FAT' : 'DA 1-6 + FAT'}
+                                                                {breakdown.pattern_label}
                                                             </span>
                                                         </td>
 
-                                                        {/* DA 1 to 6 */}
-                                                        {[0, 1, 2, 3, 4, 5].map((idx) => {
-                                                            const val = lm?.da_marks?.[idx];
-                                                            return (
-                                                                <td key={idx} className="py-3 px-2 text-center text-muted-foreground font-medium">
-                                                                    {val !== null && val !== undefined ? val : '-'}
-                                                                </td>
-                                                            );
-                                                        })}
+                                                        {/* Internal Assessment */}
+                                                        <td className="py-3 px-3 text-center bg-emerald-500/5">
+                                                            <div className="font-extrabold text-emerald-600 dark:text-emerald-400">
+                                                                {breakdown.has_entered_internals ? breakdown.internal_total : '-'}
+                                                            </div>
+                                                            <div className="text-[9px] text-muted-foreground">
+                                                                out of {breakdown.max_internal}
+                                                            </div>
+                                                        </td>
 
                                                         {/* Lab FAT (40) */}
-                                                        <td className="py-3 px-3 text-center bg-emerald-500/5 font-bold text-emerald-600 dark:text-emerald-400">
-                                                            {is10DAs ? 'N/A' : (lm?.fat_weight !== null && lm?.fat_weight !== undefined ? lm.fat_weight : '-')}
+                                                        <td className="py-3 px-3 text-center bg-indigo-500/5 font-extrabold text-indigo-600 dark:text-indigo-400">
+                                                            {breakdown.pattern === 'da10_nofat' ? (
+                                                                <span className="text-muted-foreground font-normal text-[10px]">N/A</span>
+                                                            ) : breakdown.has_entered_fat ? (
+                                                                breakdown.fat_weight
+                                                            ) : (
+                                                                '-'
+                                                            )}
                                                         </td>
 
                                                         {/* Total */}
                                                         <td className="py-3 px-3 text-center font-black text-foreground text-sm">
-                                                            <span className="bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 px-2 py-0.5 rounded-md">
+                                                            <span className="bg-primary/10 text-primary px-2 py-0.5 rounded-md">
                                                                 {formatMarks(course.total_marks)}
                                                             </span>
                                                         </td>
@@ -1059,22 +1062,39 @@ export function Marks() {
                                         </div>
                                     )}
 
-                                    {!isTheory && lm && (
-                                        <div className="space-y-2 mb-4">
-                                            <div className="flex items-center justify-between text-xs text-muted-foreground">
-                                                <span>Pattern: <strong className="text-foreground">{lm.pattern === 'da10_nofat' ? '10 DAs' : 'DA 1-6 + FAT'}</strong></span>
-                                                <span>FAT: <strong className="text-foreground">{lm.pattern === 'da10_nofat' ? 'N/A' : `${lm.fat_weight !== null && lm.fat_weight !== undefined ? lm.fat_weight : '-'} / 40`}</strong></span>
-                                            </div>
-                                            <div className="grid grid-cols-6 gap-1 text-center">
-                                                {[0, 1, 2, 3, 4, 5].map((idx) => (
-                                                    <div key={idx} className="p-1 rounded bg-muted/40 border border-border/40 text-[10px]">
-                                                        <div className="text-muted-foreground text-[8px]">DA{idx + 1}</div>
-                                                        <div className="font-bold">{lm.da_marks?.[idx] !== null && lm.da_marks?.[idx] !== undefined ? lm.da_marks[idx] : '-'}</div>
+                                    {!isTheory && lm && (() => {
+                                        const breakdown = getLabBreakdown(lm);
+                                        return (
+                                            <div className="space-y-2 mb-4">
+                                                <div className="flex items-center justify-between text-xs text-muted-foreground">
+                                                    <span>Pattern: <strong className="text-foreground">{breakdown.pattern_label}</strong></span>
+                                                    <span>Max: <strong className="text-foreground">100</strong></span>
+                                                </div>
+                                                <div className="grid grid-cols-2 gap-2 text-center text-xs">
+                                                    <div className="p-2.5 rounded-xl bg-emerald-500/5 border border-emerald-500/20">
+                                                        <div className="text-[10px] text-muted-foreground font-medium">Internal Assessment</div>
+                                                        <div className="font-extrabold text-emerald-600 dark:text-emerald-400 text-sm mt-0.5">
+                                                            {breakdown.has_entered_internals ? breakdown.internal_total : '-'}{' '}
+                                                            <span className="text-[10px] font-normal text-muted-foreground">/{breakdown.max_internal}</span>
+                                                        </div>
                                                     </div>
-                                                ))}
+                                                    <div className="p-2.5 rounded-xl bg-indigo-500/5 border border-indigo-500/20">
+                                                        <div className="text-[10px] text-muted-foreground font-medium">Lab FAT</div>
+                                                        <div className="font-extrabold text-indigo-600 dark:text-indigo-400 text-sm mt-0.5">
+                                                            {breakdown.pattern === 'da10_nofat' ? (
+                                                                <span className="text-xs text-muted-foreground font-medium">N/A</span>
+                                                            ) : (
+                                                                <>
+                                                                    {breakdown.has_entered_fat ? breakdown.fat_weight : '-'}{' '}
+                                                                    <span className="text-[10px] font-normal text-muted-foreground">/40</span>
+                                                                </>
+                                                            )}
+                                                        </div>
+                                                    </div>
+                                                </div>
                                             </div>
-                                        </div>
-                                    )}
+                                        );
+                                    })()}
 
                                     {/* Progress Bar */}
                                     <div className="space-y-1 mb-2">

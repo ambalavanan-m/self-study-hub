@@ -226,6 +226,86 @@ export function calculateLabMarks(data: Partial<LabMarks>): {
     };
 }
 
+export interface LabBreakdownResult {
+    pattern: LabPattern;
+    internal_total: number;
+    max_internal: number;
+    fat_weight: number | null;
+    max_fat: number;
+    cat_total?: number;
+    has_entered_internals: boolean;
+    has_entered_fat: boolean;
+    pattern_label: string;
+}
+
+/**
+ * Summarizes Lab internals and FAT weightages for clean list views
+ */
+export function getLabBreakdown(lm?: LabMarks): LabBreakdownResult {
+    const pattern = lm?.pattern || 'da6_fat';
+    if (!lm) {
+        return {
+            pattern,
+            internal_total: 0,
+            max_internal: pattern === 'da10_nofat' ? 100 : 60,
+            fat_weight: null,
+            max_fat: pattern === 'da10_nofat' ? 0 : 40,
+            has_entered_internals: false,
+            has_entered_fat: false,
+            pattern_label: '6 DAs + FAT',
+        };
+    }
+
+    const calc = calculateLabMarks(lm);
+    const hasEnteredFat = lm.fat_weight !== null && lm.fat_weight !== undefined && lm.fat_weight !== ('' as any);
+    const hasEnteredRawFat = lm.fat_raw !== null && lm.fat_raw !== undefined && lm.fat_raw !== ('' as any);
+
+    if (pattern === 'da10_nofat') {
+        const hasAnyDa = (lm.da_marks || []).slice(0, 10).some(v => v !== null && v !== undefined && v !== ('' as any));
+        return {
+            pattern,
+            internal_total: calc.da_total,
+            max_internal: 100,
+            fat_weight: null,
+            max_fat: 0,
+            has_entered_internals: hasAnyDa,
+            has_entered_fat: false,
+            pattern_label: '10 DAs (100)',
+        };
+    }
+
+    if (pattern === 'cat_fat') {
+        const hasCat = (lm.cat1_weight !== null && lm.cat1_weight !== undefined) || (lm.cat2_weight !== null && lm.cat2_weight !== undefined);
+        const hasDa = (lm.internal_weight !== null && lm.internal_weight !== undefined) || (lm.da_marks || []).some(v => v !== null && v !== undefined);
+        const internalTotal = Math.round((calc.cat_total + calc.da_total) * 100) / 100;
+        return {
+            pattern,
+            internal_total: internalTotal,
+            max_internal: 60,
+            fat_weight: hasEnteredFat || hasEnteredRawFat ? calc.fat_weight : null,
+            max_fat: 40,
+            cat_total: calc.cat_total,
+            has_entered_internals: hasCat || hasDa,
+            has_entered_fat: hasEnteredFat || hasEnteredRawFat,
+            pattern_label: 'CATs + FAT',
+        };
+    }
+
+    // Default: da6_fat
+    const hasAnyDa = (lm.da_marks || []).slice(0, 6).some(v => v !== null && v !== undefined && v !== ('' as any));
+    return {
+        pattern,
+        internal_total: calc.da_total,
+        max_internal: 60,
+        fat_weight: hasEnteredFat || hasEnteredRawFat ? calc.fat_weight : null,
+        max_fat: 40,
+        has_entered_internals: hasAnyDa,
+        has_entered_fat: hasEnteredFat || hasEnteredRawFat,
+        pattern_label: '6 DAs + FAT',
+    };
+}
+
+
 /**
  * Formats marks to up to 2 decimal places without trailing floating-point inaccuracies
  */
