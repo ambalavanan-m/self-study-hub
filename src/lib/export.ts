@@ -694,3 +694,6 @@ function downloadJSON(data: any, filename: string) {
     URL.revokeObjectURL(url);
 }
 
+// Re-export Marks PDF functionality
+export { generateCustomMarksPDF, type CustomMarksPDFOptions, type MarksThemeColor } from './marksExport';
+

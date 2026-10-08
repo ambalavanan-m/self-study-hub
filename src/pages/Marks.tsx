@@ -18,6 +18,7 @@ import { SEO } from '../components/SEO';
 import { AddCourseModal } from '../components/marks/AddCourseModal';
 import { ImportCoursesModal } from '../components/marks/ImportCoursesModal';
 import { CourseDetailsModal } from '../components/marks/CourseDetailsModal';
+import { CustomMarksPDFModal } from '../components/marks/CustomMarksPDFModal';
 import {
     Award,
     BookOpen,
@@ -34,7 +35,8 @@ import {
     FileSpreadsheet,
     Calendar,
     GraduationCap,
-    ExternalLink
+    ExternalLink,
+    Sliders
 } from 'lucide-react';
 import { cn } from '../lib/utils';
 
@@ -70,6 +72,7 @@ export function Marks() {
     const [selectedCourseForEdit, setSelectedCourseForEdit] = useState<CourseMarkEntry | null>(null);
     const [isImportModalOpen, setIsImportModalOpen] = useState(false);
     const [detailsModalCourse, setDetailsModalCourse] = useState<CourseMarkEntry | null>(null);
+    const [isCustomPDFModalOpen, setIsCustomPDFModalOpen] = useState(false);
 
     const fetchData = async () => {
         if (!user) return;
@@ -399,6 +402,16 @@ export function Marks() {
                     >
                         <FileSpreadsheet className="w-4 h-4" />
                         Export CSV
+                    </Button>
+                    <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => setIsCustomPDFModalOpen(true)}
+                        className="gap-2 border-primary/30 hover:border-primary/60 hover:bg-primary/5 text-foreground font-medium"
+                        disabled={courses.length === 0}
+                    >
+                        <Sliders className="w-4 h-4 text-primary" />
+                        Customize & Export PDF
                     </Button>
                     <Button
                         onClick={handleOpenAdd}
@@ -1177,6 +1190,13 @@ export function Marks() {
                     setSelectedCourseForEdit(c);
                     setIsAddModalOpen(true);
                 }}
+            />
+
+            <CustomMarksPDFModal
+                isOpen={isCustomPDFModalOpen}
+                onClose={() => setIsCustomPDFModalOpen(false)}
+                courses={courses}
+                semesters={semesters}
             />
         </div>
     );

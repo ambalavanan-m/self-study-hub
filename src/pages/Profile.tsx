@@ -9,12 +9,14 @@ import { User, Lock, Download, Upload, FileJson, FileText, LogOut, Sliders, Spar
 import { ThemeToggle } from '../components/ThemeToggle';
 import { SEO } from '../components/SEO';
 import { CustomPDFModal } from '../components/profile/CustomPDFModal';
+import { CustomMarksPDFModal } from '../components/marks/CustomMarksPDFModal';
 import { ChangeEmailModal } from '../components/profile/ChangeEmailModal';
 
 export function Profile() {
     const { user, signOut } = useAuth();
     const [loading, setLoading] = useState(false);
     const [isCustomPDFModalOpen, setIsCustomPDFModalOpen] = useState(false);
+    const [isCustomMarksPDFModalOpen, setIsCustomMarksPDFModalOpen] = useState(false);
     const [isChangeEmailModalOpen, setIsChangeEmailModalOpen] = useState(false);
     const [message, setMessage] = useState<{ type: 'success' | 'error', text: string } | null>(null);
     const [formData, setFormData] = useState({
@@ -290,6 +292,23 @@ export function Profile() {
                         </div>
                     </div>
 
+                    {/* Course Marks & Assessments */}
+                    <div className="space-y-3 p-4 glass border border-white/20 rounded-2xl">
+                        <div className="flex items-center justify-between">
+                            <div>
+                                <h3 className="font-medium">Course Marks & Assessments</h3>
+                                <p className="text-xs text-muted-foreground mt-0.5">
+                                    Export customizable PDF reports with CAT, Internal, and Lab assessment breakdowns.
+                                </p>
+                            </div>
+                        </div>
+                        <div className="flex flex-wrap gap-2">
+                            <Button variant="outline" size="sm" onClick={() => setIsCustomMarksPDFModalOpen(true)}>
+                                <Sliders className="mr-2 h-4 w-4 text-primary" /> Customize & Export PDF
+                            </Button>
+                        </div>
+                    </div>
+
                 </div>
             </Card>
             </div>
@@ -297,6 +316,11 @@ export function Profile() {
             <CustomPDFModal
                 isOpen={isCustomPDFModalOpen}
                 onClose={() => setIsCustomPDFModalOpen(false)}
+            />
+
+            <CustomMarksPDFModal
+                isOpen={isCustomMarksPDFModalOpen}
+                onClose={() => setIsCustomMarksPDFModalOpen(false)}
             />
 
             <ChangeEmailModal
