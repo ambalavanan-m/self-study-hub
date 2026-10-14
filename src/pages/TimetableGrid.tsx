@@ -87,7 +87,7 @@ const GRID_DATA: Record<string, { theory: string[], lab: string[] }> = {
     }
 };
 
-export function TimetableGrid() {
+export function TimetableGrid({ embedded = false }: { embedded?: boolean }) {
     const { user } = useAuth();
     const navigate = useNavigate();
     const [loading, setLoading] = useState(true);
@@ -193,33 +193,55 @@ export function TimetableGrid() {
     if (loading) return <div className="p-8 text-center">Loading timetable grid...</div>;
 
     return (
-        <div className="space-y-8 pb-20">
-            <SEO 
-                title="Weekly Grid | StudyTrack" 
-                description="View your weekly class schedule in a complete VIT FFCS slot grid."
-            />
-            
-            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
-                <div className="flex items-center gap-3">
-                    <Button variant="ghost" size="sm" onClick={() => navigate('/timetable')} className="h-9 w-9 p-0 hover:bg-muted">
-                        <ArrowLeft className="h-5 w-5" />
-                    </Button>
-                    <div>
-                        <h1 className="text-3xl font-bold tracking-tight">Weekly Grid</h1>
-                        <p className="text-muted-foreground">
-                            VIT FFCS master slot schedule.
-                        </p>
+        <div className={embedded ? "space-y-4" : "space-y-8 pb-20"}>
+            {!embedded && (
+                <>
+                    <SEO 
+                        title="Weekly Grid | StudyTrack" 
+                        description="View your weekly class schedule in a complete VIT FFCS slot grid."
+                    />
+                    
+                    <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+                        <div className="flex items-center gap-3">
+                            <Button variant="ghost" size="sm" onClick={() => navigate('/timetable')} className="h-9 w-9 p-0 hover:bg-muted">
+                                <ArrowLeft className="h-5 w-5" />
+                            </Button>
+                            <div>
+                                <h1 className="text-3xl font-bold tracking-tight">Weekly Grid</h1>
+                                <p className="text-muted-foreground">
+                                    VIT FFCS master slot schedule.
+                                </p>
+                            </div>
+                        </div>
+                        <Button
+                            onClick={handleDownloadImage}
+                            disabled={isDownloading}
+                            className="w-full sm:w-auto flex items-center justify-center gap-2"
+                        >
+                            <Download className="h-4 w-4" />
+                            {isDownloading ? 'Downloading...' : 'Download PNG'}
+                        </Button>
                     </div>
+                </>
+            )}
+
+            {embedded && (
+                <div className="flex items-center justify-between gap-4 pt-2 pb-1">
+                    <p className="text-sm text-muted-foreground">
+                        VIT FFCS master slot matrix. Click any booked slot to edit.
+                    </p>
+                    <Button
+                        onClick={handleDownloadImage}
+                        disabled={isDownloading}
+                        variant="secondary"
+                        size="sm"
+                        className="flex items-center justify-center gap-2"
+                    >
+                        <Download className="h-4 w-4" />
+                        {isDownloading ? 'Downloading...' : 'Export PNG'}
+                    </Button>
                 </div>
-                <Button
-                    onClick={handleDownloadImage}
-                    disabled={isDownloading}
-                    className="w-full sm:w-auto flex items-center justify-center gap-2"
-                >
-                    <Download className="h-4 w-4" />
-                    {isDownloading ? 'Downloading...' : 'Download PNG'}
-                </Button>
-            </div>
+            )}
 
             <div id="timetable-grid-container" className="w-full overflow-x-auto rounded-3xl border border-white/10 glass shadow-xxl p-2 select-none">
                 <table className="w-full border-collapse text-[10px] md:text-xs min-w-[1000px] xl:min-w-full table-fixed">

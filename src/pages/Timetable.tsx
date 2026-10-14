@@ -1,9 +1,10 @@
 import { useEffect, useState } from 'react';
+import { useSearchParams } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { collection, query, where, getDocs, doc, deleteDoc } from 'firebase/firestore';
 import { db } from '../lib/firebase';
 import { Button } from '../components/ui/button';
-import { Plus, Trash2, Wand2, Clock, MapPin, Edit2 } from 'lucide-react';
+import { Plus, Trash2, Wand2, Clock, MapPin, Edit2, List, Grid as GridIcon } from 'lucide-react';
 import { AddClassModal } from '../components/timetable/AddClassModal';
 import { SmartAddModal } from '../components/timetable/SmartAddModal';
 import { EditClassModal } from '../components/timetable/EditClassModal';
@@ -11,6 +12,7 @@ import { Card } from '../components/ui/card';
 import { cn } from '../lib/utils';
 import { SEO } from '../components/SEO';
 import { formatTimeTo12Hr, DAYS } from '../lib/time';
+import { TimetableGrid } from './TimetableGrid';
 
 const dayLabels: Record<typeof DAYS[number], string> = {
     'Monday': 'Mon',
@@ -38,6 +40,20 @@ interface TimetableEntry {
 
 export function Timetable() {
     const { user } = useAuth();
+    const [searchParams, setSearchParams] = useSearchParams();
+    const currentView = searchParams.get('view') === 'grid' ? 'grid' : 'list';
+
+    const setView = (v: 'list' | 'grid') => {
+        setSearchParams(prev => {
+            const next = new URLSearchParams(prev);
+            if (v === 'grid') {
+                next.set('view', 'grid');
+            } else {
+                next.delete('view');
+            }
+            return next;
+        });
+    };
 
     const [loading, setLoading] = useState(true);
     const [entries, setEntries] = useState<TimetableEntry[]>([]);
@@ -106,29 +122,69 @@ export function Timetable() {
     return (
         <div className="space-y-8 pb-20">
             <SEO 
-                title="Timetable | StudyTrack" 
+                title="Schedule & Timetable | StudyTrack" 
                 description="Organize your weekly class schedule with StudyTrack's interactive timetable. Manage theory and lab sessions with ease."
             />
             <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
                 <div>
-                    <h1 className="text-3xl font-bold tracking-tight">Timetable</h1>
+                    <h1 className="text-3xl font-bold tracking-tight">Schedule</h1>
                     <p className="text-muted-foreground">
-                        Manage your weekly class schedule.
+                        {currentView === 'list' 
+                            ? 'Manage your day-to-day classes and timings.' 
+                            : 'VIT FFCS master slot matrix and visual timetable.'}
                     </p>
                 </div>
                 <div className="flex flex-wrap items-center gap-3 w-full sm:w-auto">
-                    <Button onClick={() => setIsSmartAddOpen(true)} variant="secondary" className="flex-1 sm:flex-none">
-                        <Wand2 className="mr-2 h-4 w-4" />
-                        Smart Add
-                    </Button>
-                    <Button onClick={() => setIsAddClassOpen(true)} className="flex-1 sm:flex-none">
-                        <Plus className="mr-2 h-4 w-4" />
-                        Add Class
-                    </Button>
+                    {/* View Switcher Pill */}
+                    <div className="flex items-center p-1 bg-muted/60 border border-white/10 rounded-2xl glass">
+                        <button
+                            type="button"
+                            onClick={() => setView('list')}
+                            className={cn(
+                                "flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-semibold transition-all",
+                                currentView === 'list'
+                                    ? "bg-primary text-primary-foreground shadow-sm"
+                                    : "text-muted-foreground hover:text-foreground"
+                            )}
+                        >
+                            <List className="h-3.5 w-3.5" />
+                            <span>Day List</span>
+                        </button>
+                        <button
+                            type="button"
+                            onClick={() => setView('grid')}
+                            className={cn(
+                                "flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-semibold transition-all",
+                                currentView === 'grid'
+                                    ? "bg-primary text-primary-foreground shadow-sm"
+                                    : "text-muted-foreground hover:text-foreground"
+                            )}
+                        >
+                            <GridIcon className="h-3.5 w-3.5" />
+                            <span>Weekly Grid</span>
+                        </button>
+                    </div>
+
+                    {currentView === 'list' && (
+                        <>
+                            <Button onClick={() => setIsSmartAddOpen(true)} variant="secondary" className="flex-1 sm:flex-none">
+                                <Wand2 className="mr-2 h-4 w-4" />
+                                Smart Add
+                            </Button>
+                            <Button onClick={() => setIsAddClassOpen(true)} className="flex-1 sm:flex-none">
+                                <Plus className="mr-2 h-4 w-4" />
+                                Add Class
+                            </Button>
+                        </>
+                    )}
                 </div>
             </div>
 
-            {/* Day Selector */}
+            {currentView === 'grid' ? (
+                <TimetableGrid embedded />
+            ) : (
+                <>
+                    {/* Day Selector */}
             <div className="flex overflow-x-auto pb-2 gap-2 scrollbar-hide">
                 {DAYS.map((day) => (
                     <Button
@@ -232,6 +288,8 @@ export function Timetable() {
                 onSuccess={fetchTimetable}
                 entry={selectedEntryForEdit}
             />
+                </>
+            )}
         </div>
     );
 }
