@@ -4,74 +4,74 @@
 
 @layer base {
   :root {
-    /* Fresh Sky-Blue Glassmorphism Light Theme */
-    --background: 200 60% 98%;
-    --foreground: 215 25% 15%;
+    /* Deep Indigo & Electric Violet Theme — Light Mode */
+    --background: 245 40% 98%;
+    --foreground: 240 30% 12%;
 
-    --card: 200 60% 99%;
-    --card-foreground: 215 25% 15%;
+    --card: 0 0% 100%;
+    --card-foreground: 240 30% 12%;
 
-    --popover: 200 60% 99%;
-    --popover-foreground: 215 25% 15%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 240 30% 12%;
 
-    --primary: 199 94% 48%;
-    /* Sky Blue */
+    --primary: 258 90% 62%;
+    /* Electric Violet */
     --primary-foreground: 0 0% 100%;
 
-    --secondary: 200 90% 92%;
-    /* Soft Sky */
-    --secondary-foreground: 215 25% 15%;
+    --secondary: 252 65% 94%;
+    /* Soft Lavender/Violet Surface */
+    --secondary-foreground: 258 75% 28%;
 
-    --muted: 200 30% 93%;
-    --muted-foreground: 215 16% 45%;
+    --muted: 248 25% 94%;
+    --muted-foreground: 245 15% 46%;
 
-    --accent: 185 85% 75%;
-    /* Soft Teal Accent */
-    --accent-foreground: 215 25% 15%;
+    --accent: 265 85% 93%;
+    /* Orchid Accent */
+    --accent-foreground: 258 85% 35%;
 
     --destructive: 0 84.2% 60.2%;
     --destructive-foreground: 210 40% 98%;
 
-    --border: 200 30% 90%;
-    --input: 200 30% 90%;
-    --ring: 199 94% 48%;
+    --border: 250 20% 90%;
+    --input: 250 20% 90%;
+    --ring: 258 90% 62%;
 
-    --radius: 1rem;
+    --radius: 1.25rem;
   }
 
   .dark {
-    /* Premium Slate/Blue Dark Theme with Sky-Blue Accent Alignment */
-    --background: 222.2 84% 4.9%;
-    /* Slate 950 */
-    --foreground: 210 40% 98%;
-    /* Slate 50 */
+    /* Deep Indigo & Electric Violet Theme — Dark Mode (Midnight Obsidian) */
+    --background: 250 38% 7%;
+    /* Deep Obsidian #0d0a1a */
+    --foreground: 240 25% 98%;
 
-    --card: 222.2 84% 4.9%;
-    --card-foreground: 210 40% 98%;
+    --card: 250 30% 11%;
+    /* Midnight Violet Card #151128 */
+    --card-foreground: 240 25% 98%;
 
-    --popover: 222.2 84% 4.9%;
-    --popover-foreground: 210 40% 98%;
+    --popover: 250 30% 11%;
+    --popover-foreground: 240 25% 98%;
 
-    --primary: 199 94% 48%;
-    /* Sky Blue Accent */
-    --primary-foreground: 222.2 47.4% 11.2%;
+    --primary: 262 92% 67%;
+    /* Radiant Electric Violet */
+    --primary-foreground: 250 50% 6%;
 
-    --secondary: 217.2 32.6% 17.5%;
-    /* Slate 800 */
-    --secondary-foreground: 210 40% 98%;
+    --secondary: 252 26% 18%;
+    /* Deep Violet Slate */
+    --secondary-foreground: 240 25% 98%;
 
-    --muted: 217.2 32.6% 17.5%;
-    --muted-foreground: 215 20.2% 65.1%;
+    --muted: 252 22% 16%;
+    --muted-foreground: 250 15% 65%;
 
-    --accent: 217.2 32.6% 17.5%;
-    --accent-foreground: 210 40% 98%;
+    --accent: 258 35% 22%;
+    --accent-foreground: 250 90% 92%;
 
     --destructive: 0 62.8% 30.6%;
     --destructive-foreground: 210 40% 98%;
 
-    --border: 217.2 32.6% 17.5%;
-    --input: 217.2 32.6% 17.5%;
-    --ring: 199 94% 48%;
+    --border: 252 22% 20%;
+    --input: 252 22% 20%;
+    --ring: 262 92% 67%;
   }
 }
 
@@ -99,31 +99,49 @@
   .bg-mesh {
     background-color: hsl(var(--background));
     background-image: 
-      radial-gradient(at 0% 0%, hsl(var(--primary) / 0.3) 0px, transparent 50%),
-      radial-gradient(at 100% 0%, hsl(var(--secondary) / 0.3) 0px, transparent 50%),
-      radial-gradient(at 100% 100%, hsl(var(--accent) / 0.3) 0px, transparent 50%),
-      radial-gradient(at 0% 100%, hsl(var(--primary) / 0.2) 0px, transparent 50%);
+      radial-gradient(at 0% 0%, hsl(var(--primary) / 0.16) 0px, transparent 48%),
+      radial-gradient(at 100% 0%, hsl(275 80% 60% / 0.14) 0px, transparent 45%),
+      radial-gradient(at 100% 100%, hsl(235 85% 65% / 0.14) 0px, transparent 50%),
+      radial-gradient(at 0% 100%, hsl(290 80% 60% / 0.10) 0px, transparent 48%);
     background-attachment: fixed;
   }
 
   .dark .bg-mesh {
     background-color: hsl(var(--background));
     background-image: 
-      radial-gradient(at 0% 0%, hsl(var(--primary) / 0.15) 0px, transparent 50%),
-      radial-gradient(at 100% 0%, hsl(var(--secondary) / 0.15) 0px, transparent 50%),
-      radial-gradient(at 100% 100%, hsl(var(--accent) / 0.15) 0px, transparent 50%),
-      radial-gradient(at 0% 100%, hsl(var(--primary) / 0.1) 0px, transparent 50%);
+      radial-gradient(at 0% 0%, hsl(var(--primary) / 0.22) 0px, transparent 50%),
+      radial-gradient(at 100% 0%, hsl(275 80% 60% / 0.18) 0px, transparent 46%),
+      radial-gradient(at 100% 100%, hsl(235 85% 65% / 0.18) 0px, transparent 50%),
+      radial-gradient(at 0% 100%, hsl(290 80% 60% / 0.12) 0px, transparent 48%);
     background-attachment: fixed;
   }
 
   .glass {
-    @apply bg-white/40 backdrop-blur-xl border border-white/40;
-    box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.07);
+    @apply bg-white/70 dark:bg-card/75 backdrop-blur-2xl border border-white/50 dark:border-white/10;
+    box-shadow: 0 10px 30px -10px rgba(124, 58, 237, 0.08), 0 4px 6px -2px rgba(0, 0, 0, 0.04);
   }
 
   .dark .glass {
-    @apply bg-black/40 backdrop-blur-xl border border-white/10;
-    box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+    @apply bg-card/65 backdrop-blur-2xl border border-white/10;
+    box-shadow: 0 14px 40px -10px rgba(0, 0, 0, 0.5), 0 0 20px -5px rgba(139, 92, 246, 0.15);
+  }
+
+  .glass-dock {
+    @apply bg-white/80 dark:bg-card/85 backdrop-blur-2xl border border-white/60 dark:border-white/15;
+    box-shadow: 0 20px 45px -12px rgba(124, 58, 237, 0.22), 0 4px 12px -2px rgba(0, 0, 0, 0.08);
+  }
+
+  .dark .glass-dock {
+    @apply bg-card/80 backdrop-blur-2xl border border-white/15;
+    box-shadow: 0 22px 50px -10px rgba(0, 0, 0, 0.7), 0 0 35px -5px rgba(139, 92, 246, 0.25);
+  }
+
+  .glow-violet {
+    box-shadow: 0 0 25px -4px rgba(139, 92, 246, 0.45);
+  }
+
+  .glow-indigo {
+    box-shadow: 0 0 30px -5px rgba(99, 102, 241, 0.45);
   }
 }
 

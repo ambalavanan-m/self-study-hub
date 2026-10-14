@@ -68,7 +68,7 @@ export function CourseDetailsModal({
                                 <span className={cn(
                                     "text-xs px-2.5 py-0.5 rounded-full font-bold border",
                                     isTheory
-                                        ? "bg-sky-500/10 text-sky-600 dark:text-sky-400 border-sky-500/20"
+                                        ? "bg-primary/10 text-primary border-primary/25"
                                         : "bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border-emerald-500/20"
                                 )}>
                                     {isTheory ? 'Theory' : 'Lab'}
@@ -145,7 +145,7 @@ export function CourseDetailsModal({
                             <div className="p-3.5 rounded-xl border border-border/70 bg-card space-y-1">
                                 <div className="flex items-center justify-between text-xs">
                                     <span className="font-bold text-foreground">CAT 1</span>
-                                    <span className="font-bold text-sky-600 dark:text-sky-400 bg-sky-500/10 px-2 py-0.5 rounded">
+                                    <span className="font-bold text-primary bg-primary/10 px-2 py-0.5 rounded border border-primary/20">
                                         {tm.cat1_weight ?? 0} / 15
                                     </span>
                                 </div>
@@ -158,7 +158,7 @@ export function CourseDetailsModal({
                             <div className="p-3.5 rounded-xl border border-border/70 bg-card space-y-1">
                                 <div className="flex items-center justify-between text-xs">
                                     <span className="font-bold text-foreground">CAT 2</span>
-                                    <span className="font-bold text-sky-600 dark:text-sky-400 bg-sky-500/10 px-2 py-0.5 rounded">
+                                    <span className="font-bold text-primary bg-primary/10 px-2 py-0.5 rounded border border-primary/20">
                                         {tm.cat2_weight ?? 0} / 15
                                     </span>
                                 </div>
@@ -286,7 +286,7 @@ export function CourseDetailsModal({
                                     <div className="p-3 rounded-xl border border-border/70 bg-card">
                                         <div className="flex items-center justify-between text-xs">
                                             <span className="font-bold text-foreground">Lab CAT 1</span>
-                                            <span className="font-bold text-sky-600 dark:text-sky-400 bg-sky-500/10 px-2 py-0.5 rounded">
+                                            <span className="font-bold text-primary bg-primary/10 px-2 py-0.5 rounded border border-primary/20">
                                                 {lm.cat1_weight ?? 0} / 15
                                             </span>
                                         </div>
@@ -294,7 +294,7 @@ export function CourseDetailsModal({
                                     <div className="p-3 rounded-xl border border-border/70 bg-card">
                                         <div className="flex items-center justify-between text-xs">
                                             <span className="font-bold text-foreground">Lab CAT 2</span>
-                                            <span className="font-bold text-sky-600 dark:text-sky-400 bg-sky-500/10 px-2 py-0.5 rounded">
+                                            <span className="font-bold text-primary bg-primary/10 px-2 py-0.5 rounded border border-primary/20">
                                                 {lm.cat2_weight ?? 0} / 15
                                             </span>
                                         </div>

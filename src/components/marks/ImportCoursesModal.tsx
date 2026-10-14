@@ -306,7 +306,7 @@ export function ImportCoursesModal({
                                                     <span className={cn(
                                                         "text-[10px] px-1.5 py-0.2 rounded font-medium border",
                                                         c.type === 'theory'
-                                                            ? "bg-sky-500/10 text-sky-600 border-sky-500/20"
+                                                            ? "bg-primary/10 text-primary border-primary/25"
                                                             : "bg-emerald-500/10 text-emerald-600 border-emerald-500/20"
                                                     )}>
                                                         {c.type === 'theory' ? 'Theory' : 'Lab'}

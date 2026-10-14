@@ -454,7 +454,7 @@ export function Marks() {
                 </Card>
 
                 <Card className="p-4 sm:p-5 flex items-center gap-3.5 border-border/80">
-                    <div className="h-11 w-11 rounded-2xl bg-sky-500/10 text-sky-600 dark:text-sky-400 flex items-center justify-center font-bold">
+                    <div className="h-11 w-11 rounded-2xl bg-primary/10 text-primary flex items-center justify-center font-bold">
                         <TrendingUp className="h-5 w-5" />
                     </div>
                     <div>
@@ -522,7 +522,7 @@ export function Marks() {
                             className={cn(
                                 "px-3 py-1.5 rounded-lg text-xs font-semibold flex items-center gap-1.5 transition-all",
                                 filterType === 'theory'
-                                    ? "bg-background text-sky-600 dark:text-sky-400 shadow-xs"
+                                    ? "bg-background text-primary shadow-xs font-bold"
                                     : "text-muted-foreground hover:text-foreground"
                             )}
                         >
@@ -618,7 +618,7 @@ export function Marks() {
                         <div className="space-y-3">
                             <div className="flex items-center justify-between px-1">
                                 <h3 className="text-sm font-bold text-foreground flex items-center gap-2">
-                                    <BookOpen className="w-4 h-4 text-sky-500" />
+                                    <BookOpen className="w-4 h-4 text-primary" />
                                     Theory Courses
                                 </h3>
                                 <span className="text-xs text-muted-foreground">
@@ -632,10 +632,10 @@ export function Marks() {
                                         <tr className="border-b border-border/70 bg-muted/40 text-muted-foreground font-semibold">
                                             <th className="py-3 px-4 min-w-[200px]">Course (Click for Details)</th>
                                             <th className="py-3 px-3 text-center min-w-[90px]">Slot / Cr</th>
-                                            <th className="py-3 px-3 text-center min-w-[90px] bg-sky-500/5 text-sky-700 dark:text-sky-300 font-bold">
+                                            <th className="py-3 px-3 text-center min-w-[90px] bg-primary/5 text-primary font-bold">
                                                 CAT 1 (15)
                                             </th>
-                                            <th className="py-3 px-3 text-center min-w-[90px] bg-sky-500/5 text-sky-700 dark:text-sky-300 font-bold">
+                                            <th className="py-3 px-3 text-center min-w-[90px] bg-primary/5 text-primary font-bold">
                                                 CAT 2 (15)
                                             </th>
                                             <th className="py-3 px-3 text-center min-w-[120px] bg-emerald-500/5 text-emerald-700 dark:text-emerald-300 font-bold">
@@ -710,12 +710,12 @@ export function Marks() {
                                                         </td>
 
                                                         {/* CAT 1 (15) */}
-                                                        <td className="py-3 px-3 text-center font-extrabold text-sky-600 dark:text-sky-400 bg-sky-500/5">
+                                                        <td className="py-3 px-3 text-center font-extrabold text-primary bg-primary/5">
                                                             {tm?.cat1_weight !== null && tm?.cat1_weight !== undefined ? tm.cat1_weight : '-'}
                                                         </td>
 
                                                         {/* CAT 2 (15) */}
-                                                        <td className="py-3 px-3 text-center font-extrabold text-sky-600 dark:text-sky-400 bg-sky-500/5">
+                                                        <td className="py-3 px-3 text-center font-extrabold text-primary bg-primary/5">
                                                             {tm?.cat2_weight !== null && tm?.cat2_weight !== undefined ? tm.cat2_weight : '-'}
                                                         </td>
 
@@ -990,7 +990,7 @@ export function Marks() {
                                                 <span className={cn(
                                                     "text-[10px] px-2 py-0.5 rounded-full font-semibold border",
                                                     isTheory
-                                                        ? "bg-sky-500/10 text-sky-600 dark:text-sky-400 border-sky-500/20"
+                                                        ? "bg-primary/10 text-primary border-primary/25"
                                                         : "bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border-emerald-500/20"
                                                 )}>
                                                     {isTheory ? 'Theory' : 'Lab'}
@@ -1120,7 +1120,7 @@ export function Marks() {
                                                 className={cn(
                                                     "h-full rounded-full transition-all duration-500",
                                                     course.total_marks >= 90 ? "bg-emerald-500" :
-                                                    course.total_marks >= 80 ? "bg-sky-500" :
+                                                    course.total_marks >= 80 ? "bg-violet-500" :
                                                     course.total_marks >= 70 ? "bg-indigo-500" :
                                                     course.total_marks >= 50 ? "bg-amber-500" : "bg-rose-500"
                                                 )}

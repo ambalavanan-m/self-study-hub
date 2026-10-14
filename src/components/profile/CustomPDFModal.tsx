@@ -18,6 +18,7 @@ import {
     GraduationCap, 
     Palette 
 } from 'lucide-react';
+import { Alert } from '../ui/Alert';
 
 interface CustomPDFModalProps {
     isOpen: boolean;
@@ -27,6 +28,7 @@ interface CustomPDFModalProps {
 export function CustomPDFModal({ isOpen, onClose }: CustomPDFModalProps) {
     const { user } = useAuth();
     const [generating, setGenerating] = useState(false);
+    const [error, setError] = useState<string | null>(null);
 
     // Customization state
     const [reportTitle, setReportTitle] = useState('Academic Progress & Degree Report');
@@ -123,9 +125,9 @@ export function CustomPDFModal({ isOpen, onClose }: CustomPDFModalProps) {
 
             generateCustomAcademicPDF(combined, options);
             onClose();
-        } catch (error) {
-            console.error('Error generating custom PDF:', error);
-            alert('Failed to generate PDF. Please try again.');
+        } catch (err: any) {
+            console.error('Error generating custom PDF:', err);
+            setError('Failed to generate PDF. Please try again: ' + (err.message || ''));
         } finally {
             setGenerating(false);
         }
@@ -157,6 +159,14 @@ export function CustomPDFModal({ isOpen, onClose }: CustomPDFModalProps) {
 
                 {/* Modal Body */}
                 <div className="p-6 space-y-6 flex-1">
+                    {error && (
+                        <Alert 
+                            variant="error" 
+                            message={error} 
+                            onClose={() => setError(null)} 
+                        />
+                    )}
+
                     {/* Quick Presets */}
                     <div className="space-y-2">
                         <label className="text-xs font-bold uppercase tracking-wider text-muted-foreground flex items-center gap-1.5">

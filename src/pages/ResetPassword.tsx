@@ -5,7 +5,7 @@ import { sendPasswordResetEmail } from 'firebase/auth';
 import { auth } from '../lib/firebase';
 import { DesktopResetPassword } from '../components/auth/DesktopResetPassword';
 import { AuthBackground } from '../components/auth/AuthBackground';
-import { Mail, ArrowRight } from 'lucide-react';
+import { Mail, ArrowRight, Sparkles } from 'lucide-react';
 import { Alert } from '../components/ui/Alert';
 
 export function ResetPassword() {
@@ -45,49 +45,49 @@ export function ResetPassword() {
                 description="Recover your StudyTrack account password. Enter your email to receive a secure reset link."
             />
             {/* Mobile View - Clean Centered Card */}
-            <div className="block md:hidden relative h-screen max-h-screen w-full overflow-hidden flex items-center justify-center px-6 font-sans bg-slate-50 text-slate-800">
+            <div className="block md:hidden relative h-screen max-h-screen w-full overflow-hidden flex items-center justify-center px-4 font-sans bg-background text-foreground">
                 <AuthBackground />
 
-                <div className="relative z-10 w-full max-w-md flex flex-col">
-                    {/* Logo & Branding */}
-                    <div className="flex flex-col items-center mb-6">
-                        <div className="h-14 w-14 flex items-center justify-center overflow-hidden rounded-2xl bg-white border border-slate-200/60 p-2.5 shadow-md mb-3">
-                            <img src="/logo.png" alt="Logo" className="w-full h-full object-contain" />
+                <div className="relative z-10 w-full max-w-sm flex flex-col items-center space-y-5">
+                    {/* Brand Logo & Name */}
+                    <div className="flex flex-col items-center">
+                        <div className="h-14 w-14 flex items-center justify-center rounded-2xl bg-gradient-to-tr from-primary to-violet-500 shadow-xl shadow-primary/30 p-2.5 text-white mb-2">
+                            <Sparkles className="w-7 h-7" />
                         </div>
-                        <h1 className="text-2xl font-bold text-slate-800 tracking-wide text-center">
-                            Ambalavanan
+                        <h1 className="text-2xl font-black text-foreground tracking-tight text-center">
+                            StudyTrack
                         </h1>
-                        <p className="text-slate-500 text-xs font-semibold tracking-wider uppercase mt-0.5">
-                            Self Study Hub
+                        <p className="text-primary text-[10px] font-bold tracking-wider uppercase mt-0.5">
+                            Academic Portal
                         </p>
                     </div>
 
                     {/* Form Card */}
-                    <div className="w-full bg-white/80 backdrop-blur-xl rounded-[2rem] border border-white/60 p-6 sm:p-8 shadow-xl shadow-sky-900/5">
+                    <div className="w-full glass-dock rounded-[2rem] p-6 shadow-2xl border border-white/20">
                         <div className="mb-5">
-                            <h2 className="text-2xl font-bold text-slate-800">Reset Password</h2>
-                            <p className="text-slate-500 text-xs mt-1">Enter your email to receive a password reset link</p>
+                            <h2 className="text-2xl font-bold text-foreground">Reset Password</h2>
+                            <p className="text-muted-foreground text-xs mt-1">Enter your email to receive a password reset link</p>
                         </div>
 
                         {success ? (
                             <div className="space-y-5 text-center">
                                 <Alert variant="success" message="Check your email for the password reset link." />
-                                <Link to="/login" className="w-full rounded-2xl bg-gradient-to-r from-sky-400 to-blue-500 py-3.5 text-white font-semibold shadow-lg shadow-sky-400/20 hover:from-sky-500 hover:to-blue-600 active:scale-[0.98] transition-all flex items-center justify-center gap-2">
+                                <Link to="/login" className="w-full rounded-2xl bg-gradient-to-r from-primary to-violet-600 hover:from-primary/90 hover:to-violet-700 py-3.5 text-primary-foreground font-semibold shadow-lg shadow-primary/25 active:scale-[0.98] transition-all flex items-center justify-center gap-2">
                                     Back to Login <ArrowRight size={16} />
                                 </Link>
                             </div>
                         ) : (
                             <form onSubmit={handleSubmit} className="space-y-4">
                                 <div className="space-y-1.5">
-                                    <label className="text-xs font-semibold tracking-wide text-slate-500 uppercase">Email Address</label>
+                                    <label className="text-xs font-semibold tracking-wide text-muted-foreground uppercase">Email Address</label>
                                     <div className="relative">
-                                        <div className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400">
+                                        <div className="absolute left-4 top-1/2 -translate-y-1/2 text-muted-foreground">
                                             <Mail size={18} />
                                         </div>
                                         <input
                                             type="email"
                                             placeholder="Enter your email"
-                                            className="w-full bg-white border border-slate-200/80 rounded-2xl py-3.5 pl-11 pr-4 text-slate-800 placeholder:text-slate-400 focus:outline-none focus:border-sky-400 focus:ring-1 focus:ring-sky-400 transition-colors text-sm shadow-sm"
+                                            className="w-full bg-background border border-border rounded-2xl py-3.5 pl-11 pr-4 text-foreground placeholder:text-muted-foreground focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-colors text-sm shadow-sm"
                                             value={email}
                                             onChange={(e) => setEmail(e.target.value)}
                                             required
@@ -100,11 +100,11 @@ export function ResetPassword() {
                                 <button
                                     type="submit"
                                     disabled={loading}
-                                    className="w-full rounded-2xl bg-gradient-to-r from-sky-400 to-blue-500 py-3.5 text-white font-semibold shadow-lg shadow-sky-400/20 hover:from-sky-500 hover:to-blue-600 active:scale-[0.98] transition-all disabled:opacity-50 disabled:pointer-events-none mt-4 flex items-center justify-center gap-2"
+                                    className="w-full rounded-2xl bg-gradient-to-r from-primary to-violet-600 hover:from-primary/90 hover:to-violet-700 py-3.5 text-primary-foreground font-semibold shadow-lg shadow-primary/25 active:scale-[0.98] transition-all disabled:opacity-50 disabled:pointer-events-none mt-4 flex items-center justify-center gap-2 cursor-pointer"
                                 >
                                     {loading ? (
                                         <span className="flex items-center gap-2">
-                                            <svg className="animate-spin h-5 w-5 text-white" fill="none" viewBox="0 0 24 24">
+                                            <svg className="animate-spin h-5 w-5 text-current" fill="none" viewBox="0 0 24 24">
                                                 <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
                                                 <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
                                             </svg>
@@ -117,9 +117,9 @@ export function ResetPassword() {
                                     )}
                                 </button>
 
-                                <div className="text-center text-xs text-slate-400 pt-3">
+                                <div className="text-center text-xs text-muted-foreground pt-3">
                                     Remembered your password?{' '}
-                                    <Link to="/login" className="text-sky-600 font-bold hover:text-sky-700 transition-colors">
+                                    <Link to="/login" className="text-primary font-bold hover:text-primary/80 transition-colors">
                                         Sign In
                                     </Link>
                                 </div>
@@ -129,7 +129,7 @@ export function ResetPassword() {
                 </div>
             </div>
 
-            {/* Desktop View - Premium Visual Split Card */}
+            {/* Desktop View */}
             <div className="hidden md:block">
                 <DesktopResetPassword />
             </div>

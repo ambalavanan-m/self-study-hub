@@ -8,6 +8,7 @@ import { Card } from '../components/ui/card';
 import { User, Lock, Download, Upload, FileJson, FileText, LogOut, Sliders, Sparkles, Mail } from 'lucide-react';
 import { ThemeToggle } from '../components/ThemeToggle';
 import { SEO } from '../components/SEO';
+import { Alert } from '../components/ui/Alert';
 import { CustomPDFModal } from '../components/profile/CustomPDFModal';
 import { CustomMarksPDFModal } from '../components/marks/CustomMarksPDFModal';
 import { ChangeEmailModal } from '../components/profile/ChangeEmailModal';
@@ -27,9 +28,8 @@ export function Profile() {
         avatarUrl: user?.photoURL || '',
     });
 
-    // Refs for file inputs
+    // Ref for file input
     const cgpaInputRef = useRef<HTMLInputElement>(null);
-    const timetableInputRef = useRef<HTMLInputElement>(null);
 
     const handleUpdateProfile = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -59,12 +59,11 @@ export function Profile() {
         }
     };
 
-    const handleExport = async (type: 'cgpa' | 'timetable', format: 'json' | 'pdf') => {
+    const handleExport = async (type: 'cgpa', format: 'json' | 'pdf') => {
         if (!user) return;
         try {
-            const { exportCGPA, exportTimetable } = await import('../lib/export');
+            const { exportCGPA } = await import('../lib/export');
             if (type === 'cgpa') await exportCGPA({ format, userId: user.uid });
-            if (type === 'timetable') await exportTimetable({ format, userId: user.uid });
             setMessage({ type: 'success', text: `${type.toUpperCase()} exported successfully` });
         } catch (error: any) {
             console.error(error);
@@ -72,14 +71,13 @@ export function Profile() {
         }
     };
 
-    const handleImport = async (type: 'cgpa' | 'timetable', e: React.ChangeEvent<HTMLInputElement>) => {
+    const handleImport = async (type: 'cgpa', e: React.ChangeEvent<HTMLInputElement>) => {
         if (!user || !e.target.files?.[0]) return;
         const file = e.target.files[0];
 
         try {
-            const { importCGPA, importTimetable } = await import('../lib/import');
+            const { importCGPA } = await import('../lib/import');
             if (type === 'cgpa') await importCGPA({ file, userId: user.uid });
-            if (type === 'timetable') await importTimetable({ file, userId: user.uid });
             setMessage({ type: 'success', text: `${type.toUpperCase()} imported successfully` });
         } catch (error: any) {
             console.error(error);
@@ -197,12 +195,11 @@ export function Profile() {
                     </div>
 
                     {message && (
-                        <div className={`p-3 rounded-md text-sm ${message.type === 'success'
-                            ? 'bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400'
-                            : 'bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400'
-                            }`}>
-                            {message.text}
-                        </div>
+                        <Alert 
+                            variant={message.type} 
+                            message={message.text} 
+                            onClose={() => setMessage(null)} 
+                        />
                     )}
 
                     <div className="flex justify-end">
@@ -265,29 +262,6 @@ export function Profile() {
                                 className="hidden"
                                 accept=".json"
                                 onChange={(e) => handleImport('cgpa', e)}
-                            />
-                        </div>
-                    </div>
-
-                    {/* Timetable */}
-                    <div className="space-y-3 p-4 glass border border-white/20 rounded-2xl">
-                        <h3 className="font-medium">Timetable</h3>
-                        <div className="flex flex-wrap gap-2">
-                            <Button variant="outline" size="sm" onClick={() => handleExport('timetable', 'json')}>
-                                <FileJson className="mr-2 h-4 w-4" /> Export JSON
-                            </Button>
-                            <Button variant="outline" size="sm" onClick={() => handleExport('timetable', 'pdf')}>
-                                <FileText className="mr-2 h-4 w-4" /> Quick PDF
-                            </Button>
-                            <Button variant="secondary" size="sm" onClick={() => timetableInputRef.current?.click()}>
-                                <Upload className="mr-2 h-4 w-4" /> Import JSON
-                            </Button>
-                            <input
-                                type="file"
-                                ref={timetableInputRef}
-                                className="hidden"
-                                accept=".json"
-                                onChange={(e) => handleImport('timetable', e)}
                             />
                         </div>
                     </div>

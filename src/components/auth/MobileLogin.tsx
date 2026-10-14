@@ -3,7 +3,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { signInWithEmailAndPassword } from 'firebase/auth';
 import { auth } from '../../lib/firebase';
 import { AuthBackground } from './AuthBackground';
-import { ArrowRight, Eye, EyeOff, Mail, Lock } from 'lucide-react';
+import { Mail, Lock, Eye, EyeOff, ArrowRight, Sparkles } from 'lucide-react';
 import { Alert } from '../ui/Alert';
 
 export function MobileLogin() {
@@ -38,42 +38,44 @@ export function MobileLogin() {
     };
 
     return (
-        <div className="relative h-screen max-h-screen w-full overflow-hidden flex items-center justify-center px-6 font-sans bg-slate-50 text-slate-800">
+        <div className="min-h-screen w-full flex items-center justify-center p-4 relative overflow-hidden bg-background text-foreground">
             <AuthBackground />
 
-            <div className="relative z-10 w-full max-w-md flex flex-col">
-                {/* Logo & Branding */}
-                <div className="flex flex-col items-center mb-6">
-                    <div className="h-14 w-14 flex items-center justify-center overflow-hidden rounded-2xl bg-white border border-slate-200/60 p-2.5 shadow-md mb-3">
-                        <img src="/logo.png" alt="Logo" className="w-full h-full object-contain" />
+            {/* Mobile View Container */}
+            <div className="w-full max-w-sm flex flex-col items-center z-10 space-y-6">
+                
+                {/* Brand Logo & Name */}
+                <div className="flex flex-col items-center">
+                    <div className="h-16 w-16 flex items-center justify-center rounded-2xl bg-gradient-to-tr from-primary to-violet-500 shadow-xl shadow-primary/30 p-3 text-white mb-3">
+                        <Sparkles className="w-8 h-8" />
                     </div>
-                    <h1 className="text-2xl font-bold text-slate-800 tracking-wide text-center">
-                        Ambalavanan
+                    <h1 className="text-2xl font-black text-foreground tracking-tight text-center">
+                        StudyTrack
                     </h1>
-                    <p className="text-slate-500 text-xs font-semibold tracking-wider uppercase mt-0.5">
-                        Self Study Hub
+                    <p className="text-primary text-xs font-bold tracking-wider uppercase mt-0.5">
+                        Academic Portal
                     </p>
                 </div>
 
-                {/* Form Card - Frosted Light Glassmorphism */}
-                <div className="w-full bg-white/80 backdrop-blur-xl rounded-[2rem] border border-white/60 p-6 sm:p-8 shadow-xl shadow-sky-900/5">
+                {/* Form Card */}
+                <div className="w-full glass-dock rounded-[2rem] p-6 sm:p-8 shadow-2xl border border-white/20">
                     <div className="mb-6">
-                        <h2 className="text-2xl font-bold text-slate-800">Sign In</h2>
-                        <p className="text-slate-500 text-xs mt-1">Access your academic tracker and dashboard</p>
+                        <h2 className="text-2xl font-bold text-foreground">Sign In</h2>
+                        <p className="text-muted-foreground text-xs mt-1">Access your academic tracker and dashboard</p>
                     </div>
 
                     <form onSubmit={handleSubmit} className="space-y-5">
                         {/* Email Field */}
                         <div className="space-y-1.5">
-                            <label className="text-xs font-semibold tracking-wide text-slate-500 uppercase">Email</label>
+                            <label className="text-xs font-semibold tracking-wide text-muted-foreground uppercase">Email</label>
                             <div className="relative">
-                                <div className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400">
+                                <div className="absolute left-4 top-1/2 -translate-y-1/2 text-muted-foreground">
                                     <Mail size={18} />
                                 </div>
                                 <input
                                     type="email"
                                     placeholder="Enter your email"
-                                    className="w-full bg-white border border-slate-200/80 rounded-2xl py-3.5 pl-11 pr-4 text-slate-800 placeholder:text-slate-400 focus:outline-none focus:border-sky-400 focus:ring-1 focus:ring-sky-400 transition-colors text-sm shadow-sm"
+                                    className="w-full bg-background border border-border rounded-2xl py-3.5 pl-11 pr-4 text-foreground placeholder:text-muted-foreground focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-colors text-sm shadow-sm"
                                     value={formData.email}
                                     onChange={(e) => setFormData({ ...formData, email: e.target.value })}
                                     required
@@ -83,15 +85,15 @@ export function MobileLogin() {
 
                         {/* Password Field */}
                         <div className="space-y-1.5">
-                            <label className="text-xs font-semibold tracking-wide text-slate-500 uppercase">Password</label>
+                            <label className="text-xs font-semibold tracking-wide text-muted-foreground uppercase">Password</label>
                             <div className="relative">
-                                <div className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400">
+                                <div className="absolute left-4 top-1/2 -translate-y-1/2 text-muted-foreground">
                                     <Lock size={18} />
                                 </div>
                                 <input
                                     type={showPassword ? "text" : "password"}
                                     placeholder="Enter your password"
-                                    className="w-full bg-white border border-slate-200/80 rounded-2xl py-3.5 pl-11 pr-12 text-slate-800 placeholder:text-slate-400 focus:outline-none focus:border-sky-400 focus:ring-1 focus:ring-sky-400 transition-colors text-sm shadow-sm"
+                                    className="w-full bg-background border border-border rounded-2xl py-3.5 pl-11 pr-12 text-foreground placeholder:text-muted-foreground focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-colors text-sm shadow-sm"
                                     value={formData.password}
                                     onChange={(e) => setFormData({ ...formData, password: e.target.value })}
                                     required
@@ -99,7 +101,7 @@ export function MobileLogin() {
                                 <button
                                     type="button"
                                     onClick={() => setShowPassword(!showPassword)}
-                                    className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 transition-colors"
+                                    className="absolute right-4 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors"
                                 >
                                     {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
                                 </button>
@@ -108,14 +110,14 @@ export function MobileLogin() {
 
                         {/* Actions Row */}
                         <div className="flex items-center justify-between text-xs pt-1">
-                            <label className="flex items-center gap-2 cursor-pointer select-none text-slate-500 hover:text-slate-800 transition-colors">
+                            <label className="flex items-center gap-2 cursor-pointer select-none text-muted-foreground hover:text-foreground transition-colors">
                                 <input 
                                     type="checkbox" 
-                                    className="rounded border-slate-300 text-sky-500 focus:ring-sky-500 h-4 w-4 transition-colors" 
+                                    className="rounded border-border text-primary focus:ring-primary h-4 w-4 transition-colors" 
                                 />
                                 Remember Me
                             </label>
-                            <Link to="/reset-password" className="text-sky-600 hover:text-sky-700 font-semibold transition-colors">
+                            <Link to="/reset-password" className="text-primary hover:text-primary/80 font-semibold transition-colors">
                                 Forgot Password?
                             </Link>
                         </div>
@@ -127,11 +129,11 @@ export function MobileLogin() {
                         <button
                             type="submit"
                             disabled={loading}
-                            className="w-full rounded-2xl bg-gradient-to-r from-sky-400 to-blue-500 py-3.5 text-white font-semibold shadow-lg shadow-sky-400/20 hover:from-sky-500 hover:to-blue-600 active:scale-[0.98] transition-all disabled:opacity-50 disabled:pointer-events-none mt-2 flex items-center justify-center gap-2"
+                            className="w-full rounded-2xl bg-gradient-to-r from-primary to-violet-600 hover:from-primary/90 hover:to-violet-700 py-3.5 text-primary-foreground font-semibold shadow-lg shadow-primary/25 active:scale-[0.98] transition-all disabled:opacity-50 disabled:pointer-events-none mt-2 flex items-center justify-center gap-2"
                         >
                             {loading ? (
                                 <span className="flex items-center gap-2">
-                                    <svg className="animate-spin h-5 w-5 text-white" fill="none" viewBox="0 0 24 24">
+                                    <svg className="animate-spin h-5 w-5 text-current" fill="none" viewBox="0 0 24 24">
                                         <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
                                         <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
                                     </svg>
@@ -145,9 +147,9 @@ export function MobileLogin() {
                         </button>
 
                         {/* Switch Page Link */}
-                        <div className="text-center text-xs text-slate-400 pt-2">
+                        <div className="text-center text-xs text-muted-foreground pt-2">
                             Don't have an account?{' '}
-                            <Link to="/signup" className="text-sky-600 font-bold hover:text-sky-700 transition-colors">
+                            <Link to="/signup" className="text-primary font-bold hover:text-primary/80 transition-colors">
                                 Register Now
                             </Link>
                         </div>

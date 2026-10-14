@@ -668,7 +668,7 @@ export function AddCourseModal({ isOpen, onClose, onSuccess, initialData }: AddC
                 </div>
 
                 {/* Live Total & CGPA Grade Strip (Rounded Total) */}
-                <div className="p-4 rounded-2xl bg-gradient-to-r from-sky-500/10 via-primary/5 to-teal-500/10 border border-sky-500/20 flex flex-wrap items-center justify-between gap-3">
+                <div className="p-4 rounded-2xl bg-gradient-to-r from-primary/10 via-violet-500/10 to-indigo-500/10 border border-primary/20 flex flex-wrap items-center justify-between gap-3">
                     <div className="flex items-center gap-3">
                         <div className="h-10 w-10 rounded-xl bg-primary/20 text-primary flex items-center justify-center font-bold text-lg">
                             <Sparkles className="h-5 w-5" />
@@ -698,10 +698,10 @@ export function AddCourseModal({ isOpen, onClose, onSuccess, initialData }: AddC
 
                 {/* If THEORY */}
                 {courseType === 'theory' && (
-                    <div className="space-y-5 rounded-2xl border border-sky-500/20 bg-sky-500/[0.02] p-4 sm:p-5">
+                    <div className="space-y-5 rounded-2xl border border-primary/20 bg-primary/[0.02] p-4 sm:p-5">
                         <div className="flex items-center justify-between border-b border-border/50 pb-2">
                             <span className="text-sm font-bold text-foreground flex items-center gap-2">
-                                <BookOpen className="w-4 h-4 text-sky-500" /> Theory Marks Breakdown
+                                <BookOpen className="w-4 h-4 text-primary" /> Theory Marks Breakdown
                             </span>
                             <span className="text-xs text-muted-foreground">
                                 {theoryCategory === 'soft_skills'
@@ -729,7 +729,7 @@ export function AddCourseModal({ isOpen, onClose, onSuccess, initialData }: AddC
                                     className={cn(
                                         "p-2.5 rounded-lg border text-left transition-all",
                                         theoryCategory === 'standard'
-                                            ? "border-sky-500 bg-sky-500/10 text-sky-700 dark:text-sky-300 font-bold shadow-sm"
+                                            ? "border-primary bg-primary/10 text-primary font-bold shadow-sm"
                                             : "border-border hover:bg-muted text-muted-foreground"
                                     )}
                                 >
@@ -767,7 +767,7 @@ export function AddCourseModal({ isOpen, onClose, onSuccess, initialData }: AddC
                             <div className="p-3.5 rounded-xl border border-border/60 bg-background/50 space-y-2">
                                 <div className="flex items-center justify-between">
                                     <span className="text-xs font-bold text-foreground">CAT 1</span>
-                                    <span className="text-xs font-semibold text-sky-500">
+                                    <span className="text-xs font-semibold text-primary">
                                         Weight: {theoryCalc.cat1_weight} / 15
                                     </span>
                                 </div>
@@ -807,7 +807,7 @@ export function AddCourseModal({ isOpen, onClose, onSuccess, initialData }: AddC
                             <div className="p-3.5 rounded-xl border border-border/60 bg-background/50 space-y-2">
                                 <div className="flex items-center justify-between">
                                     <span className="text-xs font-bold text-foreground">CAT 2</span>
-                                    <span className="text-xs font-semibold text-sky-500">
+                                    <span className="text-xs font-semibold text-primary">
                                         Weight: {theoryCalc.cat2_weight} / 15
                                     </span>
                                 </div>
@@ -981,7 +981,7 @@ export function AddCourseModal({ isOpen, onClose, onSuccess, initialData }: AddC
                         <div className="p-3.5 rounded-xl border border-border/60 bg-background/50 space-y-2">
                             <div className="flex items-center justify-between">
                                 <span className="text-xs font-bold text-foreground">FAT (Final Assessment Test)</span>
-                                <span className="text-xs font-semibold text-sky-500">
+                                <span className="text-xs font-semibold text-primary">
                                     Weight: {theoryCalc.fat_weight} / 40
                                 </span>
                             </div>

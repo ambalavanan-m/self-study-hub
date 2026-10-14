@@ -17,6 +17,7 @@ import {
     Layers,
     FileText
 } from 'lucide-react';
+import { Alert } from '../ui/Alert';
 
 interface CustomMarksPDFModalProps {
     isOpen: boolean;
@@ -33,6 +34,7 @@ export function CustomMarksPDFModal({
 }: CustomMarksPDFModalProps) {
     const { user } = useAuth();
     const [generating, setGenerating] = useState(false);
+    const [error, setError] = useState<string | null>(null);
     const [courses, setCourses] = useState<CourseMarkEntry[]>(initialCourses || []);
     const [semesters, setSemesters] = useState<Semester[]>(initialSemesters || []);
 
@@ -151,9 +153,9 @@ export function CustomMarksPDFModal({
 
             generateCustomMarksPDF(courses, options, semesters);
             onClose();
-        } catch (err) {
+        } catch (err: any) {
             console.error('Error generating custom Marks PDF:', err);
-            alert('Failed to generate PDF. Please check your data and try again.');
+            setError('Failed to generate PDF. Please check your data and try again: ' + (err.message || ''));
         } finally {
             setGenerating(false);
         }
@@ -189,6 +191,15 @@ export function CustomMarksPDFModal({
 
                 {/* Body - 2 Column Balanced Layout (No Scrollbar) */}
                 <div className="p-6">
+                    {error && (
+                        <Alert 
+                            variant="error" 
+                            message={error} 
+                            onClose={() => setError(null)} 
+                            className="mb-4"
+                        />
+                    )}
+
                     {/* Presets Bar */}
                     <div className="mb-4">
                         <div className="flex items-center justify-between mb-1.5">

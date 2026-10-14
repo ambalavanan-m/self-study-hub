@@ -9,10 +9,8 @@ const Signup = lazy(() => import('./pages/Signup').then(m => ({ default: m.Signu
 const ResetPassword = lazy(() => import('./pages/ResetPassword').then(m => ({ default: m.ResetPassword })));
 const Dashboard = lazy(() => import('./pages/Dashboard').then(m => ({ default: m.Dashboard })));
 const CGPA = lazy(() => import('./pages/CGPA').then(m => ({ default: m.CGPA })));
-const Timetable = lazy(() => import('./pages/Timetable').then(m => ({ default: m.Timetable })));
 const Profile = lazy(() => import('./pages/Profile').then(m => ({ default: m.Profile })));
 const UpdatePassword = lazy(() => import('./pages/UpdatePassword').then(m => ({ default: m.UpdatePassword })));
-const TimetableGrid = lazy(() => import('./pages/TimetableGrid').then(m => ({ default: m.TimetableGrid })));
 const GradesView = lazy(() => import('./pages/GradesView').then(m => ({ default: m.GradesView })));
 const Curriculum = lazy(() => import('./pages/Curriculum').then(m => ({ default: m.Curriculum })));
 const Marks = lazy(() => import('./pages/Marks').then(m => ({ default: m.Marks })));
@@ -38,8 +36,8 @@ function PublicRoute({ children }: { children: React.ReactNode }) {
 // Lightweight Loading Indicator for dynamic routes
 function LoadingFallback() {
   return (
-    <div className="min-h-screen w-full flex items-center justify-center bg-slate-50/50">
-      <div className="h-8 w-8 border-3 border-sky-500 border-t-transparent rounded-full animate-spin"></div>
+    <div className="min-h-screen w-full flex items-center justify-center bg-background/80 backdrop-blur-sm">
+      <div className="h-9 w-9 border-3 border-primary border-t-transparent rounded-full animate-spin"></div>
     </div>
   );
 }
@@ -69,8 +67,8 @@ function App() {
             <Route path="/grades-view" element={<GradesView />} />
             <Route path="/curriculum" element={<Curriculum />} />
             <Route path="/cgpa/curriculum" element={<Curriculum />} />
-            <Route path="/timetable" element={<Timetable />} />
-            <Route path="/timetable-grid" element={<TimetableGrid />} />
+            <Route path="/timetable" element={<Navigate to="/dashboard" replace />} />
+            <Route path="/timetable-grid" element={<Navigate to="/dashboard" replace />} />
             <Route path="/profile" element={<Profile />} />
           </Route>
         </Routes>

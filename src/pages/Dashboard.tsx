@@ -120,7 +120,7 @@ export function Dashboard() {
     const basketStats = useMemo(() => {
         const baskets = {
             discipline_core: { label: 'Core (DC)', completed: 0, required: 60, color: 'bg-emerald-500' },
-            discipline_elective: { label: 'Elective (DE)', completed: 0, required: 24, color: 'bg-sky-500' },
+            discipline_elective: { label: 'Elective (DE)', completed: 0, required: 24, color: 'bg-violet-500' },
             project_internship: { label: 'Projects (PI)', completed: 0, required: 2, color: 'bg-indigo-500' },
             open_elective: { label: 'Open Elective (OE)', completed: 0, required: 12, color: 'bg-amber-500' },
             other: { label: 'Others / SEC', completed: 0, required: 22, color: 'bg-purple-500' }
@@ -263,11 +263,11 @@ export function Dashboard() {
 
                 {/* 2. Degree Audit & Credits (links to /curriculum) */}
                 <Link to="/curriculum" className="group">
-                    <Card className="p-5 border border-white/10 hover:border-sky-500/50 transition-all h-full flex flex-col justify-between group-hover:shadow-md">
+                    <Card className="p-5 border border-white/10 hover:border-violet-500/50 transition-all h-full flex flex-col justify-between group-hover:shadow-md">
                         <div>
                             <div className="flex items-center justify-between mb-3">
                                 <span className="text-xs font-bold uppercase tracking-wider text-muted-foreground">Degree Completion</span>
-                                <div className="h-9 w-9 rounded-xl bg-sky-500/10 text-sky-500 flex items-center justify-center group-hover:scale-110 transition-transform">
+                                <div className="h-9 w-9 rounded-xl bg-violet-500/10 text-violet-500 flex items-center justify-center group-hover:scale-110 transition-transform">
                                     <BookOpen className="h-5 w-5" />
                                 </div>
                             </div>
@@ -277,12 +277,12 @@ export function Dashboard() {
                             </div>
                             <div className="w-full bg-muted/60 h-2 rounded-full overflow-hidden mt-3">
                                 <div 
-                                    className="h-full bg-sky-500 rounded-full transition-all duration-500"
+                                    className="h-full bg-violet-500 rounded-full transition-all duration-500"
                                     style={{ width: `${Math.min(100, (completedCredits / TOTAL_CURRICULUM_CREDITS) * 100)}%` }}
                                 />
                             </div>
                         </div>
-                        <div className="pt-4 border-t border-white/5 flex items-center justify-between text-xs text-sky-500 font-semibold mt-3">
+                        <div className="pt-4 border-t border-white/5 flex items-center justify-between text-xs text-violet-500 font-semibold mt-3">
                             <span>{((completedCredits / TOTAL_CURRICULUM_CREDITS) * 100).toFixed(1)}% Degree Completed</span>
                             <ArrowUpRight className="h-4 w-4 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" />
                         </div>
@@ -488,7 +488,7 @@ export function Dashboard() {
                 <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2">
                     <div>
                         <h2 className="text-lg font-bold tracking-tight text-foreground flex items-center gap-2">
-                            <Layers className="h-5 w-5 text-sky-500" />
+                            <Layers className="h-5 w-5 text-violet-500" />
                             <span>Curriculum Credit Requirements</span>
                         </h2>
                         <p className="text-xs text-muted-foreground mt-0.5">
@@ -497,7 +497,7 @@ export function Dashboard() {
                     </div>
                     <Link to="/curriculum">
                         <Button variant="outline" size="sm" className="text-xs flex items-center gap-1.5">
-                            <BookOpen className="h-3.5 w-3.5 text-sky-500" />
+                            <BookOpen className="h-3.5 w-3.5 text-violet-500" />
                             <span>Full Curriculum Audit</span>
                         </Button>
                     </Link>
@@ -610,8 +610,8 @@ export function Dashboard() {
                 </Link>
 
                 <Link to="/curriculum" className="group">
-                    <div className="p-4 rounded-2xl glass border border-white/10 hover:border-sky-500/40 transition-all text-center flex flex-col items-center justify-center space-y-2 group-hover:scale-[1.02]">
-                        <div className="h-10 w-10 rounded-xl bg-sky-500/10 text-sky-500 flex items-center justify-center">
+                    <div className="p-4 rounded-2xl glass border border-white/10 hover:border-violet-500/40 transition-all text-center flex flex-col items-center justify-center space-y-2 group-hover:scale-[1.02]">
+                        <div className="h-10 w-10 rounded-xl bg-violet-500/10 text-violet-500 flex items-center justify-center">
                             <BookOpen className="h-5 w-5" />
                         </div>
                         <div>
